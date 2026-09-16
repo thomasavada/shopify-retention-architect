@@ -77,6 +77,49 @@ After strategy/economic approval and baseline instrumentation, pilot the propose
 
 Do not launch a broad points program as the cure for weak second purchase, add a paid membership, replace the subscription platform, create perpetual discount stacking, or expand paid acquisition on an unvalidated LTV forecast. No store configuration, imagery upload, theme edit or publishing occurs in this run.
 
+## Actions — next 30 / 60 / 90 days
+
+Every row has an owner and a check-off condition. Dates are relative to plan approval, since no build has started.
+
+| When | Action | Why this, now | Owner | Done when |
+|---|---|---|---|---|
+| 30d | Ship a second-order flow entering at day 24 and exiting on purchase, targeting the 180 one-time purchasers | Median time to second order is 39 days with p25 at 31, so the decision window opens before day 31; a flow that starts at day 40 arrives after the fast quartile has already decided | Lifecycle | Flow live, first cohort entered, exit-on-purchase verified |
+| 30d | Resolve the first-order AOV and discount-accounting ambiguity from Economics | The $5 acquisition discount may already sit inside net sales; first-order contribution is either $36.13 or $41.13 and the reward rate cannot be set until that is settled | Finance/ops | Intake answered; one figure adopted in writing |
+| 30d | Confirm fulfilled-order eligibility for the 500 orders | Confidence is capped at moderate purely because fulfilment status is unverified | Ops | Status confirmed for the 12m window |
+| 60d | Offer subscription to the 45 candidates on the 12-Pack and core flavours | Same-category repeat is 74% against same-SKU 46%, so flexibility matters more than locking a SKU | Merchandising | Offer live; take-up measured against the 45 |
+| 60d | Place the Daily Ritual Bundle in the post-purchase slot and on the PDP | It runs $102 AOV against $72.50 overall, the largest measured basket lever available | Merchandising | Placement shipped; AOV tracked against pre-period |
+| 90d | Decide on the loyalty pilot | Gated on whether the second-order flow moved the rate against a holdout; loyalty layered onto an unchanged second-purchase rate pays for behaviour that already happens | Growth | Decision recorded with the holdout comparison attached |
+
+## Subscription strategy
+
+- **Cadence evidence:** median 39 days, p25 31, p75 58. That is a real repeat habit but a loose one — a 27-day spread between quartiles is not the tight monthly ritual that makes subscription obvious. Treat cadence as offerable, not automatic.
+- **Candidate count:** 45 supplied candidates; 15 subscriptions already active. Overlap between the two is not stated in the fixture and must be resolved before sizing anything.
+- **Products to offer:** 12-Pack and core flavours. Exclude the Limited Seasonal Flavour, which is drop-driven, and Glass & Tote, which is durable — subscribing a customer to an item they buy once is how cancellations get taught.
+- **Cadence options:** default 30 days with a 45-day alternative, reflecting the p25–p75 spread rather than a single guess. Let members change it without contacting support.
+- **Discount split:** a first-order incentive with a modest ongoing rate. At 74% same-category repeat the driver is convenience, not price, and a deep standing discount converts existing behaviour into permanently cheaper behaviour.
+- **Cannibalization check:** 120 purchasers already repeat unprompted. Converting them at a discount moves margin without adding orders. The gain has to come from the 180 one-time buyers who never established a cadence — measure take-up separately for the two groups or the programme will look successful while shrinking contribution.
+
+## AOV and bundle strategy
+
+- **Current AOV:** $72.50 overall. Daily Ritual Bundle orders run $102 — $29.50 and 40.69% above overall — across 85 orders.
+- **Which bundles carry revenue:** only one bundle is supplied, so no low-performing comparison exists. Do not present the bundle's AOV as proof of incremental margin: units, product cost and any conversion penalty are unavailable.
+- **Observed progression:** 42 customers moved from Discovery Variety to the 12-Pack — a concrete cross-sell path, though the conversion rate is unavailable because the denominator is not supplied.
+- **Proposed changes:** make the bundle the default post-purchase offer, and test it as the second-order flow's offer for customers whose first order was Starter or Discovery. That reuses the one path the data already evidences.
+- **Margin guardrail:** contribution runs $41.125 per average order. A bundle discount deeper than roughly 15% of the $102 basket gives back more than the $29.50 AOV gain is worth once variable cost is counted, so set the ceiling before the merchandising conversation, not after.
+
+## Expected business impact
+
+Every figure below is **modelled** from the fixture's measured values; none is observed, and none should be read as a forecast. The arithmetic is shown so the assumption, rather than the conclusion, is what gets argued with.
+
+| Lever | Metric it moves | From → To | Revenue effect | Basis | Confidence |
+|---|---|---|---:|---|---|
+| Second-order flow | Second-purchase rate | 40% → 45% | +$1,088 / 12m | 300 purchasers × 5pp = 15 additional repeat customers × $72.50 AOV | Low |
+| Subscription on candidates | Orders per subscriber | 1.67 → 3.0 | +$2,175 / 12m | 20 of 45 candidates converting × 1.33 additional orders × $72.50, before subscription discount | Low |
+| Bundle in post-purchase | AOV on influenced orders | $72.50 → $102 | +$2,950 / 12m | 100 additional bundle orders × $29.50 uplift, gross of any discount | Low |
+
+- **Assumptions:** the 5pp lift, the 20-of-45 conversion and the 100 additional bundle orders are planning assumptions, not measured effects. Each needs a holdout to become a finding.
+- **What would have to be true for this to fail:** if the 180 one-time buyers did not repeat because of product fit rather than forgetting, the flow moves nothing; if the 45 candidates are largely the 15 existing subscribers, the subscription line is double-counted; if the bundle's AOV reflects who buys it rather than what placement does, moving it changes the mix without changing revenue.
+
 ## Brand story
 
 - **Brand promise:** Supplied story describes botanical soda, everyday gut-friendly rituals, shared meals and unexpected flavors. This is merchant narrative, not independently substantiated health efficacy.
@@ -228,6 +271,23 @@ Completion ledger: company/account unverified; connection not established (read-
 - **Completed checks:** Recalculated 40% second-purchase rate, $50 paid CAC, revenue share, AOV, contribution, proxy LTV, referral sensitivity and reward-budget scenarios from supplied inputs.
 - **Remaining manual steps:** Confirm shop/environment and APIs; reconcile reporting windows and net discount treatment; inspect flows and consent; recount segments and tier eligibility; confirm return/expiry/anti-fraud policies; validate subscription exclusions and cap monitoring; obtain approvals; run real previews/read-backs; review draft visually on mobile/desktop and test earn, redemption, referral, refunds and account navigation with controlled test orders.
 - **Rollback limitations:** Nothing changed here. Future live widget saves are immediate and have no MCP undo; capture prior settings and plan a separately approved restoration. Points, redeemed rewards and customer communications may not be reversible simply by restoring config.
+
+## Strategic monitoring
+
+Each row is a symptom that could appear in the next 30–90 days, the instinct it usually triggers, and the one job that addresses it. The trap column matters as much as the job: most of these symptoms invite a response that makes them worse.
+
+| Symptom | The trap | The one job | Check on |
+|---|---|---|---|
+| Flow sends well, second-purchase rate flat | "Increase the send frequency" | Day-24 entry may be later than this cohort's real decision point, or the offer is not the reason they stalled — test entry timing against p25 (31 days) before touching cadence | 45 days after launch, one full p75 cycle |
+| Subscription take-up strong among the 120 existing repeaters, weak among the 180 one-time | "Take-up is good, expand it" | You are discounting orders that were already coming. Report take-up split by prior repeat behaviour, and judge the programme only on the one-time cohort | 60 days |
+| Bundle AOV holds but total contribution falls | "AOV is up, it is working" | The bundle discount plus any stacked code now exceeds the $29.50 uplift; check stacking rules and recompute against the $41.125 contribution baseline | Monthly |
+| Second orders rise but returning revenue share does not | "The rate is improving, stay the course" | Second orders are arriving at a smaller basket. Compare first-order and second-order AOV directly rather than reading the rate alone | 60 days |
+| Referral incentive redeemed, few new customers | "Raise the reward" | At a $130 eligible basket the threshold, not the reward size, is the binding constraint — and the reward is competing with the $5 welcome discount | 90 days |
+| Subscribers cancel at cycle 2 | "Improve the emails" | A 30-day cadence against a 39-day median means the second shipment lands before the first is finished. Fix cadence and default to 45 days for that cohort | At each cohort's second cycle |
+
+- **Primary metric:** second-purchase rate measured on a matched acquisition cohort, not the cross-sectional 40%. The cross-sectional figure moves when acquisition volume changes and will mislead in both directions.
+- **Guardrail metrics that must not degrade:** contribution per order (baseline $41.125), returning revenue share (baseline 52.97%), and paid CAC against the $41.13 provisional ceiling.
+- **Review cadence and decision rule:** review at 45 and 90 days. Scale only if the flow's cohort beats the holdout on second-purchase rate with contribution per order intact. Iterate if the rate moves but contribution slips. Stop if neither moves after two full p75 cycles — and state that rule now, because deciding it after seeing the numbers is how programmes that are not working survive.
 
 ## 90-day measurement plan
 
