@@ -80,6 +80,25 @@ Collect 6–12 months where available:
 - Discount dependency and contribution margin.
 - Trend direction and data sufficiency.
 
+Then three checks that constrain what you are allowed to recommend. Skipping them is how
+an audit ends up proposing a channel the brand cannot reach, a program it already has, or
+a subscription it has no mechanism to sell.
+
+- **Email/SMS marketing consent among purchasers.** Read `emailMarketingConsent
+  .marketingState` while paginating customers. A lifecycle-first recommendation assumes a
+  reachable audience; if most purchasers are `NOT_SUBSCRIBED`, the first job is consent
+  capture, and any flow you design reaches almost nobody. Report the subscribed count
+  alongside the segment sizes, not as a footnote.
+- **What is already installed and live.** Query `appInstallations` and read the loyalty
+  app's own state if one is present. Recommending a program the merchant is already
+  running — or worse, a tier structure that collides with live tiers and balances —
+  destroys credibility immediately. If a program exists, the task changes from design to
+  diagnosis and migration.
+- **Selling-plan groups.** `sellingPlanGroups(first: 10)` returning nothing means the
+  store has no subscription mechanism at all. On a catalog with a monthly consumption
+  cycle that absence is itself a headline finding, and "offer subscription" becomes a
+  build task with real scope rather than a toggle.
+
 #### Getting these counts right
 
 Two failure modes here produce a confidently wrong headline number. Both are silent, so
@@ -98,18 +117,30 @@ Measured on 2025-10: the response carries `extensions.search[].warnings` saying
 `>=1` and `>=2` return the *identical* number. A wrong second-purchase rate then flows
 into every downstream conclusion.
 
-Instead, paginate `customers` and count client-side on the `numberOfOrders` field, which
-is a real field rather than a search index term:
+**Never put `orders_count` in a `query:` string at all.** On `customersCount` it is
+ignored with a warning; on the `customers` connection it is worse — the response carries
+**no** `extensions.search` block, so `customers(query: "orders_count:>=2")` simply returns
+`edges: []` with nothing to tell you the filter was bogus. An agent that trusts it reports
+"zero repeat customers" and concludes the brand has no retention at all.
+
+Instead, paginate customers and do the counting yourself on `numberOfOrders`, which is a
+real field rather than a search-index term:
 
 ```graphql
-customers(first: 250, after: $cursor, query: "tag:YOUR_MARKER") {
-  edges { cursor node { id numberOfOrders amountSpent { amount } } }
-  pageInfo { hasNextPage }
+query($cursor: String) {
+  customers(first: 250, after: $cursor) {
+    edges { cursor node { id numberOfOrders amountSpent { amount } } }
+    pageInfo { hasNextPage }
+  }
 }
 ```
 
-Whenever you use a `query:` filter, read `extensions.search[].warnings` and treat any
-`invalid_field` as a failed query, not a result.
+Two cautions on that pagination. Tag filters silently exclude records that lost the tag —
+on a store where another app had rewritten customer tags, `query: "tag:MARKER"` returned
+3,492 of 3,506 customers, and the 14 missing were exactly the ones that mattered. Prefer
+unfiltered pagination and filter in your own code where you can see what you dropped. And
+`amountSpent` is lifetime, not trailing-12-month, so do not use it directly for tier
+sizing without recomputing from orders in the window you care about.
 
 **2. Reading orders silently truncates to 60 days.** An app without the
 `read_all_orders` scope can only see orders from the last 60 days. Nothing errors —
@@ -117,15 +148,25 @@ the older orders are simply absent, so a "12-month" audit quietly becomes a 60-d
 and every cohort, AOV and trend is wrong. Confirm the scope before trusting any window
 longer than 60 days.
 
-For ShopifyQL aggregates this syntax is verified working:
+**3. ShopifyQL needs this exact wrapper.** Verified working on 2025-10 — copy the shape,
+not just the statement, because the surrounding selection set is where it usually breaks:
 
-```
-FROM sales SHOW total_sales, orders SINCE -365d UNTIL today
+```graphql
+query {
+  shopifyqlQuery(query: "FROM sales SHOW total_sales, orders SINCE -365d UNTIL today") {
+    tableData { columns { name dataType } rows }
+    parseErrors
+  }
+}
 ```
 
-`SHOW ... BY <column>` is a parse error — use `GROUP BY`, and always read `parseErrors`
-before using `tableData`. ShopifyQL also has its own budget (`extensions.shopifyqlCost`)
-separate from the GraphQL cost bucket.
+Three things that will cost you a round trip each if you improvise instead:
+`parseErrors` is a list of strings, so selecting `{ code message }` on it fails with
+"Selections can't be made on scalars"; there is no `TableResponse` type to spread an
+inline fragment on; and the rows field is `rows`, not `rowData`. In the statement itself,
+`SHOW ... BY <column>` is a parse error — use `GROUP BY`. Read `parseErrors` before
+trusting `tableData`, and note ShopifyQL bills to its own budget
+(`extensions.shopifyqlCost`), separate from the GraphQL cost bucket.
 
 #### Report the denominator explicitly
 
@@ -255,6 +296,19 @@ Audit the live storefront:
 - Brand origin, promise, rituals, community, mascot, ingredients/materials and cultural symbols.
 - Real colors, fonts, button style, spacing, imagery and tone.
 - Product use occasions and moments customers identify with.
+
+**When the storefront is password-protected** — which is the normal state of a development
+store, so expect it during any demo — do not silently skip this phase or invent a brand
+voice. Fall back in this order: read the published theme's `config/settings_data.json`
+through the Admin API for real color, font and radius tokens (note it is JSONC — it
+carries a generated `/* */` header that breaks a strict JSON parser, so strip comments
+first); read product descriptions, page content and metafields for voice; ask the merchant
+for the password or a staging link.
+
+State which source you used. A brand section built from theme tokens alone is thin, and
+saying so is better than presenting stock theme defaults as if they were a brand identity
+— `#ffffff`, `#000000` and Inter are what an unconfigured Horizon theme ships with, not a
+design language.
 
 Create three original loyalty territories. Score each for brand fit, motivation, distinctiveness, Joy feasibility and margin safety. Learn principles—not assets or copy—from creative programs such as Sun Bum and OLIPOP.
 
@@ -410,7 +464,17 @@ For `DEMO_SEED`, read `references/demo-store-data.md`.
 
 ## Required output
 
-Use `references/output-template.md`. Always include:
+Use `references/output-template.md`.
+
+**Precedence, so this list never overrides the verdict.** Guardrail 1 and Phase 7 both say
+a program is proposed only when the evidence justifies it; this list says what a complete
+report contains. They do not conflict — a section whose recommendation is "not yet" is
+still present, it just carries the refusal and the reason rather than a design. Write
+"Proposed program: none — the constraint is activation, not retention; revisit when
+second-purchase rate exceeds X" and the report is complete. Inventing a program to fill a
+heading is the failure this ordering exists to prevent.
+
+Include:
 
 - Executive stage verdict
 - Second-purchase count/rate, reported alongside the total customer-record count
