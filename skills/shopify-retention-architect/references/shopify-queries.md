@@ -68,3 +68,16 @@ inline fragment on; and the rows field is `rows`, not `rowData`. In the statemen
 trusting `tableData`, and note ShopifyQL bills to its own budget
 (`extensions.shopifyqlCost`), separate from the GraphQL cost bucket.
 
+**4. Returning-customer revenue share has no ShopifyQL column.** The obvious attempt,
+`FROM sales SHOW total_sales GROUP BY customer_type`, fails with `Column Not Found:
+Column 'customer_type' not found`, so the metric the report asks for cannot be fetched
+directly. Compute it from orders instead, which is more defensible anyway because you can
+state the rule you used.
+
+Page through orders with `customer { id }`, `processedAt` and `totalPriceSet`, sort each
+customer's orders by `processedAt`, then treat the earliest as first-time revenue and the
+rest as returning. Two judgements to state explicitly: orders from before your window that
+make a customer "returning" inside it, and how you treat orders with no customer attached.
+Say which convention you used — a reader can accept a stated rule and cannot audit an
+unstated one.
+

@@ -51,6 +51,11 @@ Before any write, establish whether the run is:
 
 Default to `AUDIT_ONLY`.
 
+Read only the references the mode actually reaches. `references/joy-mcp-execution.md` and
+`references/klaviyo-mcp-execution.md` describe build phases that `AUDIT_ONLY` and
+`PLAN_ONLY` never enter — loading them up front is a few hundred lines of context spent on
+instructions you will not execute. Open them when you reach Phase 8.
+
 ## Core guardrails
 
 1. Never recommend loyalty merely because Joy can build it.
@@ -112,10 +117,48 @@ checkouts. Dividing by total records understates the rate several-fold and point
 whole strategy at the wrong problem.
 
 So report both numbers side by side: total customer records, and purchasers. The gap
-between them is itself a finding — a base that is mostly non-purchasers is an activation
-problem, and no loyalty mechanic addresses it.
+between them is itself a finding — a base that is mostly non-purchasers is usually an
+activation problem, and no loyalty mechanic addresses it.
 
-If fewer than six months of usable history or fewer than 100 fulfilled orders exist, label the audit provisional.
+**Test that conclusion before you draw it.** The rule is right and its naive application
+is confidently wrong, because a low purchaser ratio can be an artifact of how the data
+arrived rather than a fact about the business. Compare the spread of customer `createdAt`
+against the spread of order `processedAt`: a real store accumulates both together, while a
+store where customers all appeared in one recent burst and orders trail behind is mid-import.
+Check too whether the non-purchasers differ systematically from purchasers — if they all
+lack marketing consent, or all share a creation timestamp, they are a seeding artifact and
+not a dormant audience. Only call it an activation problem once the shape survives that test.
+
+#### Check that the dataset is not moving under you
+
+Probe `ordersCount` once at the start and again at least ten minutes later. If it moved,
+you are auditing a store that is still being written to — a seed in progress, a migration,
+a live sale — and every figure needs a snapshot timestamp beside it. Trends are
+meaningless in that state; say so rather than reporting one.
+
+This is the normal case during a demo rather than an edge case: seeding 1,600 orders takes
+around five hours, so an audit run in the same session is almost certainly reading a
+partial table. Without this check you will spend real time hunting for cancelled orders to
+explain a discrepancy that is just the table growing.
+
+#### Count what you claim to count
+
+The provisional rule below talks about **fulfilled** orders while the collection list above
+says "orders". Those differ, and the gap hides real problems: a store can show a thousand
+orders and zero fulfilments, which usually means an import or an operational stall rather
+than a retention story. Read `displayFulfillmentStatus` alongside the counts and report
+both, because a dataset that is 100% unfulfilled is telling you something about its
+provenance.
+
+#### When to refuse
+
+Label the audit provisional if there is under six months of usable history or fewer than
+100 fulfilled orders. Below that there is a floor where the honest answer is to stop: if
+**no** customer has a second order, second-purchase rate, time-to-second-order, repeat AOV,
+at-risk and lapsed segments are all structurally unfillable, and a report full of
+"unavailable" reads as confident when it is empty. Say plainly that the dataset cannot
+support a verdict, state what is missing, and stop. That is a better outcome than a
+document whose headline metric is 0.0% presented as a finding.
 
 ### Phase 2 — Diagnose repeatability and brand stage
 
@@ -188,6 +231,14 @@ Record every answer as **merchant-claimed** and keep it visibly separate from me
 data. When a claim contradicts the store data, say so and show both; do not silently pick
 one. If the merchant cannot answer the margin question, stop short of recommending a
 reward rate and say what you would need.
+
+**When nobody is there to answer** — an unattended `AUDIT_ONLY` run, a demo, a first pass
+before a call — do not walk through the economics formulas producing a column of
+"unavailable". None of margin, ad spend or new-paid-customer counts exist anywhere in the
+Shopify API, so that section is guaranteed empty and costs real time to fill with nothing.
+Emit a short stub instead: the questions, why each is needed, and what each unlocks. Then
+carry on with the parts the data can answer, and mark every downstream recommendation that
+depends on economics as unsized rather than omitting it.
 
 Calculate:
 
