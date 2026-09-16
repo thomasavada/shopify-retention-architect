@@ -16,12 +16,12 @@ say so rather than presenting it as designed.
 
 | Program decision | Audit input that determines it |
 |---|---|
-| Tier thresholds | actual trailing-12-month spend distribution — put tier 2 near the 15–20th percentile of purchasers and tier 3 near the top 4–5% |
+| Tier thresholds | trailing-12-month spend distribution — tier 2 at the spend level reached by the **top ~15%** of purchasers, tier 3 at the **top ~4%** |
 | Reward ladder rungs | AOV, so the first rung is reachable in 1–2 orders |
 | Point expiry window | median time to second order — expiry must land *after* the natural repurchase point, never before |
 | Earn multiplier ceiling | contribution margin; the multiplier multiplies your cost, not just their delight |
 | Referral reward size | AOV and, when known, paid CAC — referral only makes sense below paid CAC |
-| Whether to run missions | size of the non-purchaser base; missions monetize attention you already have |
+| Which missions to run | what content or reach the brand actually needs — reviews, UGC, social proof |
 
 ## The arithmetic
 
@@ -49,25 +49,50 @@ check.
 
 Resolve it deliberately, and say which lever you pulled:
 
-- **Move the first rung further out.** Three to five orders to the first reward is honest
-  on a low-AOV catalog, provided the ladder shows the next rung clearly so progress is
-  visible from order one.
+- **Make the first rung non-monetary.** Free shipping, a sample, early access: perceived
+  value well above marginal cost, which sidesteps the ratio entirely. On a low-AOV catalog
+  this is usually the right answer and the one most often overlooked.
 - **Run richer than 1%.** Defensible when contribution margin covers it — Three Ships runs
   5% — but state the cost as a percentage of revenue rather than burying it in a points
   table.
-- **Make the first rung non-monetary.** Free shipping, a sample, early access: perceived
-  value well above marginal cost, which sidesteps the ratio entirely. This is usually the
-  best answer on a low-AOV catalog and the one most often overlooked.
 
-What is not acceptable is quietly keeping both constraints and shipping a $1 reward, or
+Note what does *not* work: moving the first rung further out. Five orders at a $58 AOV is
+$290 of spend, which at 1% is a $2.90 reward — still not worth crossing a room for. Distance
+cannot rescue a rate that is too thin for the basket; only a different rate or a different
+kind of reward can.
+
+What is never acceptable is quietly keeping both constraints and shipping a $1 reward, or
 keeping the 1% label while the ladder actually pays 5%.
+
+### When contribution margin is unavailable
+
+Margin decides the reward rate, and on an unattended audit nobody is there to supply it.
+Do not let that dead-end the design — and do not invent a margin either.
+
+Design at a **stated planning assumption**, make it visible, and show what changes if it is
+wrong:
+
+1. Pick one assumption and label it as such, not as a finding. For DTC brands a
+   contribution margin in the 50–65% band after COGS, shipping and payment fees is the
+   usual planning range; say which end you assumed and why the catalog suggests it.
+2. Size the program at that assumption, then give a short sensitivity: what the program
+   costs as a share of revenue at, say, 40%, 55% and 70% margin. Two lines of arithmetic
+   turn an unverifiable number into a decision the merchant can make in a glance.
+3. State the break-even explicitly — the incremental repeat rate or AOV lift needed for the
+   program to pay for itself at each margin. That is the number a founder actually argues
+   with.
+4. Make margin confirmation a **launch gate**, not a footnote: the program is designed, and
+   it does not go live until the merchant confirms the rate is affordable.
+
+A program presented this way is honest and actionable. A program that refuses to exist
+because one input is missing is neither.
 
 Benchmark ranges for the rest:
 
 | Quantity | Safe range |
 |---|---|
 | Earn rate | 1–5 units per $1 |
-| Signup bonus | 25–100 units (≈ $0.50–1.00 of value) |
+| Signup bonus | $0.50–1.00 of value — convert to units at your own earn rate rather than copying a unit count |
 | Referral, each side | $8–15 of value |
 | Reward ladder rungs | at least 5 |
 | Top rung | not convertible to money |
@@ -90,6 +115,35 @@ than sitting on a balance, and costs you only on customers who are already worth
 
 State both choices explicitly in the program object. An agent that copies the shape of a
 worked example without deciding these has not designed a program, it has reskinned one.
+
+### Definitions to pin down before anyone builds this
+
+A program described only in bands cannot be implemented. Each of these is a decision
+someone will otherwise make silently and differently from what you intended.
+
+**What the earn rate applies to.** Points accrue on the **post-discount merchandise
+subtotal**, excluding tax, shipping and gift-card purchases. Earning on the pre-discount
+total means a sitewide sale quietly inflates every balance; earning on the grand total
+means you pay points on freight. Say which you chose — implementers assume different
+defaults, and the difference is real money.
+
+**How the tier multiplier compounds.** A 1.5× multiplier multiplies the **earn rate**, not
+the redemption value: at a 1% base, a top-tier member earns points 1.5× faster, so their
+effective return is 1.5%. It is not 1% × 1.5 applied again at redemption. Left undefined,
+implementations have shipped at 6% by stacking both ends.
+
+**How product rewards are costed.** Value them at **COGS** in the cost model and at retail
+in the member-facing copy — that gap is exactly why product rewards beat dollars off. State
+both numbers so nobody later "discovers" the program is cheaper or dearer than modelled.
+
+**Breakage.** Some points are never redeemed, and assuming zero overstates cost while
+assuming a lot understates the liability you are carrying. Take it from the merchant's own
+history if a program already exists — you can read outstanding balances from the incumbent
+app's customer metafields. With no history, model a band rather than a point estimate and
+say the accrued liability is tracked monthly.
+
+**Redemption stacking.** Whether a reward can ride on top of a discount code, a bundle
+price, or a subscription discount. This is the single most expensive unstated rule.
 
 ### The remaining numbers, and where each comes from
 
@@ -135,24 +189,30 @@ Borrowing another brand's thresholds imports their AOV and order frequency along
 numbers. Compute the trailing-12-month spend for every purchaser, sort it, and read the
 thresholds off the percentiles you want to address.
 
-A worked example from a real 1,000-purchaser store with $54 AOV:
+The procedure, which is the part that transfers between brands:
 
-| Threshold | Customers above it | Share of revenue |
-|---|---:|---:|
-| $150 | 9.9% | 32.3% |
-| $200 | 4.8% | 22.4% |
-| $350 | 3.5% | 18.5% |
+1. Compute trailing-12-month spend per purchaser and sort it descending.
+2. Read the dollar figure at the **top 15%** — that is your tier 2 candidate. It has to be
+   reachable by a motivated regular, or the ladder has no middle.
+3. Read the figure at the **top 4%** — that is your tier 3 candidate. It has to stay scarce
+   enough to signal something.
+4. Check what share of revenue each captured slice holds. If your top tier covers ~4% of
+   customers but a fifth of revenue, the perks are affordable. If the top decile holds
+   barely a third of revenue there is no whale class: three tiers, and resist a fourth.
+5. Round to a number a human would say — $150, not $147.
 
-Three Ships' $150/$350 happen to land at the top 10% and top 3.5% here, which is a
-defensible shape — but that is coincidence, not design. On a store with twice the AOV the
-same dollars would capture a third of the base and the top tier would stop signalling
-anything.
+Worked on a different shape, so the method is visible rather than the answer. A homewares
+brand, 2,400 purchasers, AOV $180, buying two or three times a year:
 
-Aim for a tier 2 that a motivated regular can actually reach (roughly the top 10–20%) and
-a tier 3 that stays scarce enough to mean something while still holding meaningful revenue
-— a top tier covering 3–5% of customers but a fifth of revenue is worth its perks. If your
-top decile holds barely a third of revenue, there is no whale class: keep three tiers and
-resist the temptation to add a fourth.
+| Percentile | Trailing-12mo spend | Share of revenue |
+|---|---|---:|
+| top 15% | $520 | 41% |
+| top 4% | $1,150 | 19% |
+
+Tiers land at $500 and $1,150. Note what did **not** transfer: Three Ships' $150/$350 would
+have put 60% of this brand's purchasers into tier 2 and made tier 3 ordinary. The dollars
+are a property of the basket, not of loyalty design — only the percentile targets carry
+across.
 
 ## The program object to produce
 
@@ -195,7 +255,15 @@ the ladder feel like progress toward something rather than a coupon dispenser.
 ## Anti-patterns the audit will usually expose
 
 - **Points for the non-purchaser base.** If most records have never bought, they did not
-  fail to convert for lack of a loyalty account. Fix activation instead.
+  fail to convert for lack of a loyalty account. Fix activation instead. This is not an
+  argument against missions — missions earn from people who have already bought, for
+  actions the brand genuinely wants. It is an argument against treating a points balance as
+  a conversion mechanism for people who have never purchased.
+- **Expiry a member cannot be warned about.** Expiry is only fair where you can reach them
+  first. If a large share of purchasers have no marketing consent, either do not expire
+  their points or surface the balance and its expiry date in the customer account, where
+  consent is not required. Silently expiring the balance of someone you never emailed is
+  how a program generates support tickets instead of orders.
 - **Stacking points on already-discounted bundles.** A bundle at 25–30% off plus a
   redemption is a compounding giveaway. State the stacking rule explicitly.
 - **Rewarding repeat behaviour that already happens unprompted.** If a large share of
