@@ -4,6 +4,24 @@ Everything here was verified against a live store on API version 2025-10. Each i
 silent failure — the query returns something plausible rather than an error — which is why
 they are written down rather than left to be rediscovered.
 
+**0. Order dates: `processedAt`, never `createdAt`.** This is the single most damaging
+mistake available here, because it fails silently and plausibly. `createdAt` is when the
+row was written; `processedAt` is when the sale happened. On any migrated, imported or
+seeded store they diverge completely — sorting by `CREATED_AT` on a store whose year of
+history was imported this afternoon returns a history that appears to be minutes long, and
+nothing errors.
+
+```graphql
+# windowing, sorting and interval maths all key off processedAt
+orders(first: 250, after: $cursor, sortKey: PROCESSED_AT, query: "processed_at:>=2025-09-17") {
+  edges { cursor node { id processedAt totalPriceSet { shopMoney { amount } } customer { id } } }
+  pageInfo { hasNextPage }
+}
+```
+
+`createdAt` has exactly one legitimate use in an audit: compared against `processedAt`, a
+wide gap tells you the data was imported rather than accumulated, which is worth reporting.
+
 **1. `customersCount` does not support the filters you want.** This pattern looks
 reasonable and is wrong:
 

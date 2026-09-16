@@ -98,15 +98,39 @@ a subscription it has no mechanism to sell.
   reachable audience; if most purchasers are `NOT_SUBSCRIBED`, the first job is consent
   capture, and any flow you design reaches almost nobody. Report the subscribed count
   alongside the segment sizes, not as a footnote.
-- **What is already installed and live.** Query `appInstallations` and read the loyalty
-  app's own state if one is present. Recommending a program the merchant is already
-  running — or worse, a tier structure that collides with live tiers and balances —
-  destroys credibility immediately. If a program exists, the task changes from design to
-  diagnosis and migration.
+- **What is already installed and live.** Query `appInstallations`. Recommending a program
+  the merchant already runs — or a tier structure that collides with live tiers and
+  balances — destroys credibility immediately. If a program exists, the task changes from
+  design to diagnosis and migration.
+
+  When the loyalty app's own API is not authenticated, you can still read its state from
+  Shopify, because these apps mirror member data into customer metafields. Joy writes the
+  `avada_joy` namespace — `point` (balance), `vipTier` (JSON with `tierId`/`tierName`) and
+  `customerType` (`member` or guest) — so a page through `customers { metafields }` gives
+  you member count, tier distribution and outstanding balance without any app credentials.
+  Customer tags carry the same signal more coarsely (`joy_tag_member`). Check the app embed
+  is actually enabled in the published theme too: an installed app with the embed off is a
+  program nobody can see, which is a finding in itself.
 - **Selling-plan groups.** `sellingPlanGroups(first: 10)` returning nothing means the
   store has no subscription mechanism at all. On a catalog with a monthly consumption
   cycle that absence is itself a headline finding, and "offer subscription" becomes a
   build task with real scope rather than a toggle.
+
+#### Use `processedAt` for every date in the audit
+
+An order carries two dates and they mean different things. `processedAt` is when the
+transaction happened and is what Shopify shows as the order date and reports in analytics.
+`createdAt` is when the record was written to the database.
+
+For a store that has ever been migrated, imported or seeded, those diverge completely, and
+`createdAt` silently destroys the audit: sort or filter by it and a year of trading
+collapses into however long the import took. There is no error — you get a plausible,
+tiny, wrong history. Cohorts, time-to-second-order, seasonality and trend are all built on
+order dates, so this one field choice decides whether any of them mean anything.
+
+Use `processedAt` for windowing, sorting and every interval you compute. The one honest
+use of `createdAt` is as a diagnostic: comparing its spread against `processedAt`'s is how
+you detect an imported dataset in the first place.
 
 The counting looks trivial and is not: several of these queries return a plausible wrong
 number rather than an error. Read `references/shopify-queries.md` before writing the first
@@ -458,13 +482,25 @@ For `DEMO_SEED`, read `references/demo-store-data.md`.
 
 Use `references/output-template.md`.
 
-**Precedence, so this list never overrides the verdict.** Guardrail 1 and Phase 7 both say
-a program is proposed only when the evidence justifies it; this list says what a complete
-report contains. They do not conflict — a section whose recommendation is "not yet" is
-still present, it just carries the refusal and the reason rather than a design. Write
-"Proposed program: none — the constraint is activation, not retention; revisit when
-second-purchase rate exceeds X" and the report is complete. Inventing a program to fill a
-heading is the failure this ordering exists to prevent.
+**Precedence, so this list never overrides the verdict.** Read in this order, and let the
+earlier rule win:
+
+1. **The data floor.** If the dataset cannot support a verdict — no customer has a second
+   order, so repeat rate, time-to-second, repeat AOV and the at-risk and lapsed segments
+   are all structurally unfillable — then the correct output is a short refusal: what you
+   measured, what is missing, what would have to exist, and a stop. Do not produce the
+   twenty sections below with "unavailable" in most of them. A long document whose headline
+   metric is 0.0% reads as authoritative and is empty, which is worse than a short honest
+   one. This outranks any brief asking for a full report.
+2. **Guardrail 1 and Phase 7.** A program is proposed only where the evidence justifies it.
+   A section whose recommendation is "not yet" is still present — it carries the refusal
+   and the reason instead of a design. "Proposed program: none — the constraint is
+   activation, not retention; revisit when second-purchase rate exceeds X" is a complete
+   answer to that heading.
+3. **This list**, which describes what a complete report contains when the data supports one.
+
+Inventing a program, or padding headings to look thorough, is the failure this ordering
+exists to prevent.
 
 Include:
 

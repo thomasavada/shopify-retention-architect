@@ -39,6 +39,29 @@ Richer programs do exist in market — Three Ships runs 100 pts = $5 at 1 pt/$1,
 approaches 7.5% of revenue. Only recommend that when contribution margin is comfortably
 above it and you have said the number out loud.
 
+### When 1% and "reachable" collide
+
+These two constraints — a ~1% redemption ROI and a first rung reachable in one or two
+orders — are incompatible below a certain basket size, and the arithmetic says so plainly.
+At a $58 AOV, two orders earn 116 points at 1 point per dollar; at 1% ROI that buys a
+**$1.16** reward. Nobody joins a program for that, and presenting it signals you did not
+check.
+
+Resolve it deliberately, and say which lever you pulled:
+
+- **Move the first rung further out.** Three to five orders to the first reward is honest
+  on a low-AOV catalog, provided the ladder shows the next rung clearly so progress is
+  visible from order one.
+- **Run richer than 1%.** Defensible when contribution margin covers it — Three Ships runs
+  5% — but state the cost as a percentage of revenue rather than burying it in a points
+  table.
+- **Make the first rung non-monetary.** Free shipping, a sample, early access: perceived
+  value well above marginal cost, which sidesteps the ratio entirely. This is usually the
+  best answer on a low-AOV catalog and the one most often overlooked.
+
+What is not acceptable is quietly keeping both constraints and shipping a $1 reward, or
+keeping the 1% label while the ladder actually pays 5%.
+
 Benchmark ranges for the rest:
 
 | Quantity | Safe range |
