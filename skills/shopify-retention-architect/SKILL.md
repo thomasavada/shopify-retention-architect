@@ -103,14 +103,23 @@ a subscription it has no mechanism to sell.
   balances — destroys credibility immediately. If a program exists, the task changes from
   design to diagnosis and migration.
 
-  When the loyalty app's own API is not authenticated, you can still read its state from
-  Shopify, because these apps mirror member data into customer metafields. Joy writes the
-  `avada_joy` namespace — `point` (balance), `vipTier` (JSON with `tierId`/`tierName`) and
-  `customerType` (`member` or guest) — so a page through `customers { metafields }` gives
-  you member count, tier distribution and outstanding balance without any app credentials.
-  Customer tags carry the same signal more coarsely (`joy_tag_member`). Check the app embed
-  is actually enabled in the published theme too: an installed app with the embed off is a
-  program nobody can see, which is a finding in itself.
+  When the loyalty app's own API is not authenticated, read its state from Shopify
+  directly. Joy keeps the **live program configuration in a shop metafield** — namespace
+  `joy_loyalty_avada`, keys `data` and `loyalty_data` — which holds the earning rules,
+  reward ladder and tier definitions as JSON. That is the authoritative source for what the
+  merchant is actually running today, and reading it turns "there is a program" into "here
+  is the program".
+
+  Member state lives in `avada_joy` customer metafields, but **pick the field carefully**.
+  Measured on a store with 789 members: `point` covered 789 customers and `vipTier` 732,
+  while `customerType` covered **1** and the `joy_tag_member` tag covered **14**. Counting
+  members by tag would have understated the program by more than fifty times. Use the
+  presence of `point`, corroborate with `vipTier`, and treat tags as decoration.
+
+  Check the app embed is enabled in the published theme too — an installed app with the
+  embed off is a program nobody can see. And cross-check the config against store
+  capability: an earning rule like "2× points on subscription orders" is inert if
+  `sellingPlanGroups` is empty, which is the kind of contradiction worth leading with.
 - **Selling-plan groups.** `sellingPlanGroups(first: 10)` returning nothing means the
   store has no subscription mechanism at all. On a catalog with a monthly consumption
   cycle that absence is itself a headline finding, and "offer subscription" becomes a
@@ -159,10 +168,16 @@ not a dormant audience. Only call it an activation problem once the shape surviv
 
 #### Check that the dataset is not moving under you
 
-Probe `ordersCount` once at the start and again at least ten minutes later. If it moved,
-you are auditing a store that is still being written to — a seed in progress, a migration,
-a live sale — and every figure needs a snapshot timestamp beside it. Trends are
-meaningless in that state; say so rather than reporting one.
+Probe `ordersCount` at the start and again later in the run. If it moved, you are auditing
+a store still being written to — a seed in progress, a migration, a live sale — and every
+figure needs a snapshot timestamp beside it. Trends are meaningless in that state; say so
+rather than reporting one.
+
+Do not wait for a timer if the answer already arrived. Any two counts of the same thing
+that disagree — a paginated pull returning more rows than a `ordersCount` taken minutes
+earlier, for instance — have already told you the table is growing. Record it and move on;
+sitting out a ten-minute interval to confirm what you have observed three times is dead
+time.
 
 Treat this as routine rather than paranoid. Any store being seeded is written at roughly
 five orders a minute, so a dataset of real size is under construction for hours and an
@@ -181,13 +196,25 @@ provenance.
 
 #### When to refuse
 
-Label the audit provisional if there is under six months of usable history or fewer than
-100 fulfilled orders. Below that there is a floor where the honest answer is to stop: if
-**no** customer has a second order, second-purchase rate, time-to-second-order, repeat AOV,
-at-risk and lapsed segments are all structurally unfillable, and a report full of
-"unavailable" reads as confident when it is empty. Say plainly that the dataset cannot
-support a verdict, state what is missing, and stop. That is a better outcome than a
-document whose headline metric is 0.0% presented as a finding.
+Two independent tests. A dataset can pass one and fail the other, so check both.
+
+**Provisional** — under six months of usable history, or fewer than 100 fulfilled orders.
+Report normally, labelled provisional.
+
+**Stop** — no customer has a second order. This is a separate condition, not a subset of
+the one above: a store can hold eleven months of history and five hundred fulfilled orders
+and still have zero repeat customers, which is exactly the state a half-finished import
+produces. When it holds, second-purchase rate, time-to-second-order, repeat AOV and the
+at-risk and lapsed segments are all structurally unfillable, and a long report with
+"unavailable" in most sections reads as authoritative while saying nothing.
+
+A stop is still a deliverable, not a blank page. Report what you did measure and what it
+constrains — order and customer counts with their snapshot times, AOV, discount
+dependency, consent coverage, any incumbent program and its configuration, whether selling
+plans exist, and the `createdAt`-versus-`processedAt` comparison that explains the shape.
+Those findings do not depend on repeat behaviour and are often the most useful thing in the
+document. What you withhold is the verdict, the mechanism recommendation and the program
+design: name what is missing, say what would have to exist, and stop there.
 
 ### Phase 2 — Diagnose repeatability and brand stage
 

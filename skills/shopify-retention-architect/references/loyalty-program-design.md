@@ -72,6 +72,53 @@ Benchmark ranges for the rest:
 | Reward ladder rungs | at least 5 |
 | Top rung | not convertible to money |
 
+### Rung spacing and whether ROI rises up the ladder
+
+Two questions the benchmarks above do not answer, and both change how the program feels.
+
+**Spacing.** Keep the monetary rungs on a flat arithmetic step — $5, $10, $15, $20, $25 at
+100-point intervals, as Three Ships does — so the next reward is always the same distance
+away and progress reads as steady. Geometric spacing (100, 250, 600, 1500) makes each
+subsequent reward feel further than the last, which is the opposite of what a ladder is
+for. Save the jump for the non-monetary rungs at the top, where the distance is the point.
+
+**Curve.** Hold the redemption ROI flat across the monetary rungs. If it rises — $5 for 100
+points but $30 for 500 — you have built an incentive to hoard, and hoarding is the failure
+mode that kills currency circulation and leaves you carrying a growing liability. Let the
+escalation live in the **tier multiplier** instead, which rewards sustained spend rather
+than sitting on a balance, and costs you only on customers who are already worth it.
+
+State both choices explicitly in the program object. An agent that copies the shape of a
+worked example without deciding these has not designed a program, it has reskinned one.
+
+### The remaining numbers, and where each comes from
+
+These are the values most often lifted wholesale from whatever example was to hand. Each
+has a rule.
+
+**Tier multipliers** multiply your cost, so read them as ROI. A 1% base program with a 1.5×
+top tier pays 1.5% on your highest-spending customers, and that number has to survive the
+margin conversation. Steps of roughly 0.25× are perceptible without compounding sharply;
+anything past 2× usually means the base rate was set too low to feel worthwhile and is
+being rescued at the top.
+
+**Mission values** should reflect what the action is worth to you, not a flat gesture. A
+written review with a photo produces reusable content and deserves several times a social
+follow. Then apply the cap that matters: the total a member can earn without buying
+anything should stay below your first reward rung, or you have built a way to farm rewards
+instead of a reason to purchase.
+
+**Tier-entry bonuses** are a welcome, not a windfall — size them near the signup bonus.
+Their job is to make promotion feel like an event on the day it happens.
+
+**Referral minimum order** belongs above your AOV, otherwise the reward subsidises a
+below-average basket. Three Ships gives $15 on orders over $60 against an AOV comfortably
+under that; the threshold is what stops referral becoming a discount channel.
+
+**Point expiry** follows the reorder cycle, not the calendar. Expire after roughly two to
+three times the median gap between orders — long enough that a normal customer never loses
+points, short enough to bound the liability — and warn before it happens.
+
 ## Tiers are earned by spend, never by accumulated points
 
 This is the single most common design error, and it is self-defeating: if tier status is
