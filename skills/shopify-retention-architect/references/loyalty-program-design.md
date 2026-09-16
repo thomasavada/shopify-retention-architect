@@ -59,6 +59,31 @@ Split the two axes — **spend determines status, points are for spending** — 
 **trailing 12-month window**, not a calendar-year reset. Chubbies ($150/$300), 100% Pure
 ($250/$750) and Three Ships ($150/$350) all do exactly this.
 
+### Size the thresholds from your own distribution, never by copying dollars
+
+Borrowing another brand's thresholds imports their AOV and order frequency along with the
+numbers. Compute the trailing-12-month spend for every purchaser, sort it, and read the
+thresholds off the percentiles you want to address.
+
+A worked example from a real 1,000-purchaser store with $54 AOV:
+
+| Threshold | Customers above it | Share of revenue |
+|---|---:|---:|
+| $150 | 9.9% | 32.3% |
+| $200 | 4.8% | 22.4% |
+| $350 | 3.5% | 18.5% |
+
+Three Ships' $150/$350 happen to land at the top 10% and top 3.5% here, which is a
+defensible shape — but that is coincidence, not design. On a store with twice the AOV the
+same dollars would capture a third of the base and the top tier would stop signalling
+anything.
+
+Aim for a tier 2 that a motivated regular can actually reach (roughly the top 10–20%) and
+a tier 3 that stays scarce enough to mean something while still holding meaningful revenue
+— a top tier covering 3–5% of customers but a fifth of revenue is worth its perks. If your
+top decile holds barely a third of revenue, there is no whale class: keep three tiers and
+resist the temptation to add a fourth.
+
 ## The program object to produce
 
 ```yaml
