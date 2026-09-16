@@ -145,6 +145,16 @@ say the accrued liability is tracked monthly.
 **Redemption stacking.** Whether a reward can ride on top of a discount code, a bundle
 price, or a subscription discount. This is the single most expensive unstated rule.
 
+**Which products, by name.** A rung that says "free full-size product" is not buildable.
+Name the eligible SKUs from the catalog you just audited, and prefer items with a high
+retail-to-COGS ratio and enough stock depth to absorb redemptions. The audit already tells
+you which products repeat and which are loss leaders — use it.
+
+**How many can be served.** An experiential top rung — a consultation, an event, a custom
+piece — needs a capacity number and a cadence: how many per month, who delivers it, what
+happens when demand exceeds supply. Without that it is marketing copy, and the first time
+it is claimed someone in operations discovers the program made a promise they cannot keep.
+
 ### The remaining numbers, and where each comes from
 
 These are the values most often lifted wholesale from whatever example was to hand. Each
