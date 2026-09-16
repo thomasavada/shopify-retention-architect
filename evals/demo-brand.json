@@ -1,0 +1,72 @@
+{
+  "mode": "PLAN_ONLY",
+  "as_of": "2026-09-16",
+  "brand": {
+    "name": "FizzyRoot",
+    "domain": "demo.fizzyroot.example",
+    "fictional_demo": true,
+    "story": "A playful botanical soda brand built around everyday gut-friendly rituals, bright retro-futurist packaging, shared meals, and discovering unexpected flavors.",
+    "category": "functional beverages",
+    "channels": ["Shopify DTC"],
+    "email_platform": "Klaviyo",
+    "subscription": {
+      "installed": true,
+      "active_subscribers": 15
+    },
+    "loyalty": {
+      "installed": false,
+      "program": null
+    }
+  },
+  "store_metrics_12m": {
+    "customers_with_1plus_orders": 300,
+    "customers_with_2plus_orders": 120,
+    "customers_exactly_1_order": 180,
+    "customers_exactly_2_orders": 75,
+    "customers_exactly_3_orders": 30,
+    "customers_5plus_orders": 15,
+    "orders": 500,
+    "net_sales": 36250,
+    "average_order_value": 72.5,
+    "returning_customer_revenue": 19200,
+    "returning_customer_revenue_share": 0.5297,
+    "average_orders_per_customer": 1.6667,
+    "gross_margin": 0.65,
+    "variable_cost_per_order_excluding_cogs": 6,
+    "average_acquisition_discount": 5
+  },
+  "paid_acquisition_90d": {
+    "spend": 15000,
+    "new_paid_customers": 300
+  },
+  "products": [
+    {"name": "Starter 6-Pack", "price": 36, "orders": 145, "repeat_pattern": "entry"},
+    {"name": "12-Pack", "price": 64, "orders": 130, "repeat_pattern": "replenishment"},
+    {"name": "Discovery Variety Pack", "price": 72, "orders": 110, "repeat_pattern": "discovery"},
+    {"name": "Daily Ritual Bundle", "price": 108, "orders": 85, "repeat_pattern": "bundle", "aov": 102},
+    {"name": "Seasonal Flavor", "price": 38, "orders": 20, "repeat_pattern": "drop"},
+    {"name": "Glass & Tote Set", "price": 48, "orders": 10, "repeat_pattern": "merchandise"}
+  ],
+  "repeat_behavior": {
+    "median_days_to_second_order": 39,
+    "p25_days_to_second_order": 31,
+    "p75_days_to_second_order": 58,
+    "same_category_repeat_rate": 0.74,
+    "same_sku_repeat_rate": 0.46,
+    "variety_pack_to_12_pack_customers": 42,
+    "subscription_candidate_customers": 45,
+    "at_risk_repeat_customers": 28,
+    "lapsed_repeat_customers": 16,
+    "advocate_candidates": 24
+  },
+  "desired_outcomes": [
+    "Increase second-purchase rate",
+    "Reduce dependence on paid acquisition",
+    "Grow subscription without making the brand feel discount-heavy",
+    "Create a loyalty identity that feels playful and culturally distinctive"
+  ],
+  "constraints": {
+    "max_reward_cost_rate": 0.05,
+    "avoid": ["generic bronze/silver/gold", "deep perpetual discounts", "copying Sun Bum or OLIPOP"]
+  }
+}

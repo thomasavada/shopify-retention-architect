@@ -1,0 +1,285 @@
+---
+name: shopify-retention-architect
+description: Audit Shopify retention, then build safely with Joy MCP.
+version: 0.1.0
+author: Thomas Nguyen (thomasavada), Hermes Agent
+license: MIT
+platforms: [linux, macos, windows]
+metadata:
+  tags: [shopify, retention, loyalty, subscription, referral, joy-mcp]
+---
+
+# Shopify Retention Architect
+
+Diagnose a Shopify brand's retention stage, quantify second purchase, choose the right retention mechanism, design an on-brand loyalty system, and—only after approval—configure Joy programs and widget through Joy MCP.
+
+This skill does not sell loyalty by default. It may recommend lifecycle marketing, AOV/CRO, subscription, referral, loyalty, paid membership, a hybrid, or no retention build yet.
+
+## When to use
+
+Use when the user asks to:
+
+- Audit a Shopify brand's retention or repeat-purchase performance.
+- Decide whether the brand is ready for loyalty.
+- Choose subscription vs. referral vs. loyalty.
+- Calculate CAC/referral economics.
+- Segment customers for Shopify or Klaviyo.
+- Design an original on-brand loyalty program.
+- Configure Joy programs or widget with Joy MCP.
+- Prepare or seed a realistic Shopify development store for a retention demo.
+
+Do not use for a generic loyalty feature explanation with no store, no data and no intent to diagnose.
+
+## Prerequisites
+
+Use available capabilities; never pretend a missing integration exists.
+
+- Shopify store access through Shopify CLI/Admin API or merchant-supplied analytics.
+- Joy MCP for configuration and widget writes.
+- Klaviyo's official MCP server for segment/flow reads and approved writes.
+- Browser/storefront access for brand-story and visual audit.
+- Optional Klaviyo access. Without it, return segment/flow definitions only.
+- For demo seeding, a dedicated Shopify development store. Never seed a production merchant.
+
+Before any write, establish whether the run is:
+
+- `AUDIT_ONLY`
+- `PLAN_ONLY`
+- `BUILD_DRAFT`
+- `PUBLISH_APPROVED`
+- `DEMO_SEED`
+
+Default to `AUDIT_ONLY`.
+
+## Core guardrails
+
+1. Never recommend loyalty merely because Joy can build it.
+2. Never invent margin, ad spend, CAC, reorder cadence, segment counts or benchmarks.
+3. Never call assisted/associated revenue incremental revenue.
+4. Never compute churn as `100% - returning-customer rate`.
+5. Never seed or modify a live merchant without explicit scope confirmation.
+6. Joy MCP config tools preview first. Apply only after the merchant/user approves the exact diff.
+7. Use draft widget target first. Live widget writes require a separate explicit approval because they change the storefront immediately and have no publish/undo step.
+8. Read back every MCP write and report unconfirmed fields.
+9. Preserve existing balances, tiers and useful mechanics when migrating.
+10. Separate facts, merchant inputs, estimates and creative proposals.
+
+## Workflow
+
+### Phase 1 — Audit store maturity
+
+Collect 6–12 months where available:
+
+- Orders, customers, revenue and overall AOV.
+- Customers with exactly one order.
+- Customers with two or more orders.
+- `second_purchase_rate = customers_with_2plus_orders / customers_with_1plus_order`.
+- Returning-customer revenue share.
+- Purchase frequency and time to second order.
+- Top products/categories and bundle performance.
+- Discount dependency and contribution margin.
+- Trend direction and data sufficiency.
+
+Prefer exact Shopify counts. A practical Admin GraphQL pattern is:
+
+- `customersCount(query: "orders_count:>=1")`
+- `customersCount(query: "orders_count:>=2")`
+
+Verify supported query syntax against the target API version before running it.
+
+If fewer than six months of usable history or fewer than 100 fulfilled orders exist, label the audit provisional.
+
+### Phase 2 — Diagnose repeatability and brand stage
+
+Classify the product model:
+
+- Replenishable
+- Routine/serviceable
+- Collectible/expanding
+- Durable/infrequent
+- One-time/occasion
+- Subscription-native
+
+Use observed reorder behavior over category assumptions.
+
+Assign one primary stage:
+
+| Stage | Constraint | Build next |
+|---|---|---|
+| Foundation | Data, product or operations unreliable | Stabilize and measure |
+| Acquisition/conversion | Traffic or first-order conversion | Acquisition/CRO |
+| AOV/offer | Basket cannot support CAC/rewards | Bundle, threshold, cross-sell |
+| Second purchase | Product repeats but buyers stop after order one | Lifecycle/Klaviyo |
+| Subscription ready | Predictable replenishment | Subscription + supporting loyalty |
+| Loyalty ready | Organic repeat and margin already exist | Rewards + referral + touchpoints |
+| Community/VIP | Strong value and affinity | VIP, membership, access, experiences |
+
+### Phase 3 — Economics
+
+Ask once for missing inputs:
+
+- Gross/contribution margin
+- Monthly paid spend
+- New paid customers in the same period
+- Variable fulfillment/payment costs
+- Typical reorder window
+
+Calculate:
+
+- `paid_CAC = paid_spend / new_paid_customers`
+- `first_order_contribution = AOV × contribution_margin - acquisition_discount`
+- `contribution_LTV_proxy = measured_customer_spend × contribution_margin - variable_costs`
+- `target_CAC = contribution_LTV_proxy × explicit_safety_factor`
+- `referral_CAC = expected_friend_reward_cost + expected_redeemed_referrer_reward_cost`
+
+State the window and every assumption.
+
+### Phase 4 — Choose the retention mechanism
+
+- **Lifecycle first:** plausible second purchase, weak post-purchase communication.
+- **Subscription first:** predictable same-SKU/category replenishment and convenience.
+- **Loyalty first:** multi-SKU, discovery, progress, status or community-driven repeat.
+- **Referral first:** high satisfaction/shareability or durable/high-consideration product; referral CAC below paid CAC.
+- **Hybrid:** subscription for replenishment, loyalty for relationship, referral for acquisition, Klaviyo for activation.
+- **Not yet:** no credible repeat/referral loop, insufficient margin/data, or a more urgent acquisition/conversion problem.
+
+### Phase 5 — Segment the customer base
+
+Return definitions and actual counts when available:
+
+1. New non-buyers
+2. First-time buyers
+3. Second-purchase due
+4. Active repeaters
+5. Subscription candidates
+6. VIP candidates
+7. At-risk
+8. Lapsed
+9. Advocates/referrers
+10. High reward balance with no recent redemption
+
+For each provide logic, count or `unavailable`, entry/exit, activation, offer and success metric. Verify Joy/Klaviyo property names before giving copy-paste filters.
+
+### Phase 6 — Understand the brand story
+
+Audit the live storefront:
+
+- Brand origin, promise, rituals, community, mascot, ingredients/materials and cultural symbols.
+- Real colors, fonts, button style, spacing, imagery and tone.
+- Product use occasions and moments customers identify with.
+
+Create three original loyalty territories. Score each for brand fit, motivation, distinctiveness, Joy feasibility and margin safety. Learn principles—not assets or copy—from creative programs such as Sun Bum and OLIPOP.
+
+### Phase 7 — Structure the program
+
+Only when justified, propose:
+
+- Club and currency name.
+- Cashback/reward rate and implied program cost.
+- Three to five reachable rewards.
+- VIP tiers based on actual AOV/frequency.
+- Non-purchase missions: review, UGC, social, birthday, referral, receipt, community actions.
+- One aspirational/non-purchasable reward where appropriate.
+- Referral give/get and expected referral CAC.
+- Subscription interaction.
+- Expiry, returns, fraud and stacking rules.
+- 90-day success metrics.
+
+Use `references/decision-framework.md` and `references/output-template.md`.
+
+### Approval gate 1 — Strategy
+
+Present the audit and proposed build. Ask the user to approve:
+
+- Mechanism
+- Economics
+- Program structure
+- Creative territory
+- Storefront/account touchpoints
+
+Do not call Joy MCP writes before approval.
+
+### Phase 8 — Build with Joy MCP
+
+Follow `references/joy-mcp-execution.md`.
+
+Required sequence:
+
+1. Read current Joy settings/programs first.
+2. Run every `joy_configure_*` tool without `apply:true` to obtain dry-run diffs.
+3. Present all diffs and risks.
+4. Apply one approved write at a time.
+5. Read back after each write.
+6. Stop and report any unconfirmed field; do not continue blindly.
+
+### Phase 8B — Build lifecycle with Klaviyo MCP
+
+Follow `references/klaviyo-mcp-execution.md`.
+
+1. Connect the official Klaviyo MCP in read-only mode first.
+2. Read existing segments, flows, metrics and exact Joy-synced property names.
+3. Present proposed segment definitions, flow triggers, exits, timing, offers and counts.
+4. Wait for explicit Klaviyo approval.
+5. Reconnect with write tools enabled only for the approved build.
+6. Create one segment/flow at a time, keep flows draft/inactive, and read back each object.
+7. Activation, campaign sending and customer-facing delivery require separate approval.
+
+The client orchestrates Joy MCP and Klaviyo MCP. Joy MCP does not call Klaviyo MCP server-to-server.
+
+### Phase 9 — Design the widget on-brand
+
+1. Call `joy_scan_brand_design`.
+2. Call `joy_get_widget_fields`; never guess paths or enums.
+3. Propose program identity, colors, fonts, buttons, corner radius, launcher, cards, imagery and visible sections.
+4. Upload merchant-approved imagery with `joy_upload_image` when needed.
+5. Dry-run `joy_configure_widget_draft` / `joy_set_widget_fields` using draft target.
+6. Apply to draft after approval.
+7. Read back and visually review in Joy admin/storefront preview.
+
+### Approval gate 2 — Publish
+
+A live widget write is separate from draft approval. State clearly:
+
+- It changes the storefront immediately.
+- There is no publish step and no undo in the MCP tool.
+
+Use live target only after explicit `PUBLISH_APPROVED` confirmation. Then verify storefront behavior.
+
+### Phase 10 — Account and header touchpoints
+
+Offer, do not force:
+
+- Customer Account Loyalty Hub/app extension where available.
+- Replace the existing Shopify account icon behavior with the Joy drawer using `links.replaceAccountLink`.
+- If theme detection fails, use the approved `links.accountLinkSelector` field.
+
+Important: `replaceAccountLink` intercepts an existing account link; it does **not** add a new rewards icon. A separate rewards icon in the header requires theme/app-block implementation through Shopify theme tooling, review and explicit approval.
+
+## Demo mode
+
+For `DEMO_SEED`, read `references/demo-store-data.md`.
+
+- Confirm the target is a development store.
+- Create realistic products, bundles, customers and historical orders.
+- Make repeat behavior coherent enough to produce a real second-purchase rate.
+- Label all records as synthetic demo data.
+- Seed Joy analytics separately if needed; BigQuery seed data does not populate ShopifyQL.
+- Never use a production store.
+
+## Required output
+
+Use `references/output-template.md`. Always include:
+
+- Executive stage verdict
+- Second-purchase count/rate
+- Evidence table
+- Economics and CAC
+- Segment map
+- Build-now/build-later/not-now
+- Proposed Joy program
+- Creative territory and widget direction
+- Approval status
+- MCP writes/dry-runs/read-backs
+- Klaviyo segments/flows and activation state
+- Publish status
+- Verification and 90-day measurement plan

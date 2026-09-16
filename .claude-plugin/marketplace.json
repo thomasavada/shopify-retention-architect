@@ -1,0 +1,18 @@
+{
+  "name": "shopify-retention",
+  "owner": {
+    "name": "Thomas Nguyen"
+  },
+  "metadata": {
+    "description": "Shopify retention audit and Joy/Klaviyo MCP execution plugins."
+  },
+  "plugins": [
+    {
+      "name": "shopify-retention-architect",
+      "source": ".",
+      "version": "0.1.0",
+      "description": "Audit Shopify retention and safely build approved Joy and Klaviyo programs.",
+      "category": "productivity"
+    }
+  ]
+}

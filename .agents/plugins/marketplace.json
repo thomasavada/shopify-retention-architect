@@ -1,0 +1,21 @@
+{
+  "name": "shopify-retention",
+  "interface": {
+    "displayName": "Shopify Retention Architect"
+  },
+  "plugins": [
+    {
+      "name": "shopify-retention-architect",
+      "source": {
+        "source": "local",
+        "path": "."
+      },
+      "version": "0.1.0",
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
