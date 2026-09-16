@@ -82,8 +82,12 @@ Collect 6–12 months where available:
 - Returning-customer revenue share.
 - Purchase frequency and time to second order.
 - Top products/categories and bundle performance.
-- Discount dependency and contribution margin.
+- Discount dependency — what share of orders carry a discount, split by first versus repeat.
 - Trend direction and data sufficiency.
+
+Contribution margin belongs in Phase 3, not here: it exists nowhere in the Shopify API and
+only the merchant can supply it. Listing it as something to "collect" sends you hunting for
+a number that is not there.
 
 Then three checks that constrain what you are allowed to recommend. Skipping them is how
 an audit ends up proposing a channel the brand cannot reach, a program it already has, or
@@ -136,10 +140,11 @@ you are auditing a store that is still being written to — a seed in progress, 
 a live sale — and every figure needs a snapshot timestamp beside it. Trends are
 meaningless in that state; say so rather than reporting one.
 
-This is the normal case during a demo rather than an edge case: seeding 1,600 orders takes
-around five hours, so an audit run in the same session is almost certainly reading a
-partial table. Without this check you will spend real time hunting for cancelled orders to
-explain a discrepancy that is just the table growing.
+Treat this as routine rather than paranoid. Any store being seeded is written at roughly
+five orders a minute, so a dataset of real size is under construction for hours and an
+audit started in the same session is almost certainly reading a partial table. Without the
+check you will spend real time hunting for cancelled or archived orders to explain a
+discrepancy that is just the table growing.
 
 #### Count what you claim to count
 
