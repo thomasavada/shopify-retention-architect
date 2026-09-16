@@ -165,15 +165,52 @@ Assign one primary stage:
 | Loyalty ready | Organic repeat and margin already exist | Rewards + referral + touchpoints |
 | Community/VIP | Strong value and affinity | VIP, membership, access, experiences |
 
-### Phase 3 — Economics
+### Phase 3 — Interview the merchant, then compute economics
 
-Ask once for missing inputs:
+Store data answers *what happened*. It cannot tell you margin, what they have already
+tried, what they are willing to give away, or what they are actually trying to achieve —
+and a recommendation built without those is confident guesswork. Ask before you design.
 
-- Gross/contribution margin
-- Monthly paid spend
-- New paid customers in the same period
-- Variable fulfillment/payment costs
-- Typical reorder window
+Put the questions in one batch rather than trickling them out, and say why each matters so
+the merchant can see you are not interrogating them for form's sake. Where you can already
+answer a question from the data, do not ask it — show your number and ask them to confirm
+or correct it. That turns a questionnaire into a conversation and surfaces disagreements
+between their mental model and their data, which is often the most valuable moment in the
+whole audit.
+
+**Economics — needed to size anything**
+
+1. Contribution margin after COGS, shipping and payment fees — the ceiling on every reward.
+2. Monthly paid spend and new customers acquired from it, so CAC is measured not assumed.
+3. Current discounting: standing codes, welcome offer, sale cadence. Rewards stack on top
+   of whatever already exists.
+
+**History — stops you recommending what already failed**
+
+4. What retention has been tried before, and what happened? A program that was launched
+   and quietly died tells you more than any benchmark.
+5. Is there an existing loyalty/subscription tool, and does it hold balances or tiers that
+   must be migrated?
+6. What does post-purchase communication look like today — flows, cadence, who owns it?
+
+**Product reality — the data cannot see this**
+
+7. What is the genuine consumption cycle of the hero product? If observed reorder gaps and
+   the merchant's answer disagree, that gap is a finding.
+8. Which products do they *want* to sell more of, and which are loss leaders?
+9. Anything seasonal, supply-constrained or being discontinued?
+
+**Intent and constraints — determines what is even buildable**
+
+10. What does success look like in 90 days, in their words?
+11. Who executes this, and how much time do they actually have each week?
+12. Any hard limits — margin floor, brand rules against discounting, platform or agency
+    constraints?
+
+Record every answer as **merchant-claimed** and keep it visibly separate from measured
+data. When a claim contradicts the store data, say so and show both; do not silently pick
+one. If the merchant cannot answer the margin question, stop short of recommending a
+reward rate and say what you would need.
 
 Calculate:
 
@@ -236,7 +273,61 @@ Only when justified, propose:
 - Expiry, returns, fraud and stacking rules.
 - 90-day success metrics.
 
-Use `references/decision-framework.md` and `references/output-template.md`.
+Read `references/loyalty-program-design.md` before proposing any of the above. It holds the
+arithmetic the market converges on (redemption ROI, earn rates, referral sizing), the rule
+that tiers must be earned by trailing-12-month **spend** rather than accumulated points,
+how to derive thresholds from the audit's own spend distribution, the rewards-page block
+structure, and a worked teardown of a live program. Designing the numbers without it
+produces programs that are either unaffordable or unmotivating.
+
+Also use `references/decision-framework.md` and `references/output-template.md`.
+
+### Phase 7B — Subscription, AOV and expected impact
+
+Loyalty is rarely the whole answer, and a report that proposes only a rewards program has
+usually skipped the two levers with faster payback.
+
+**Subscription.** Recommend it where the data shows a genuine cadence — a tight
+distribution of repeat gaps, not merely a high repeat rate. Name the candidate customers,
+the products worth offering, the default cadence, and the split between a first-order
+incentive and the ongoing one. Check cannibalization honestly: customers who already
+reorder unprompted will now do so at a discount, so the gain has to come from the ones who
+were forgetting, not the ones who were reliable.
+
+**AOV and bundles.** Compare AOV across order composition — single item, multi-item basket,
+dedicated bundle SKU — and let that gap, not intuition, drive the recommendation. Bundles
+that raise basket value without a sitewide discount are the cheapest margin-safe lever
+available, but only where the progression data shows customers actually moving up.
+
+**Expected impact.** For each lever, state the metric it moves, the movement you expect,
+the revenue that implies, and the basis. Show the arithmetic for modelled figures — a
+reader who disagrees should be able to argue with your assumption rather than your
+conclusion. Never present a modelled number in the same voice as a measured one.
+
+### Phase 7C — Strategic monitoring
+
+A measurement plan that lists metrics is not a plan; the merchant will read the numbers and
+still not know what to do. Give them a diagnosis table instead: the symptom they may see,
+the instinct it triggers that is usually wrong, and the single job that addresses it.
+
+Name **one** primary metric the program lives or dies by, plus guardrails that must not
+degrade, and a decision rule stated in advance — what result means stop, iterate, or scale.
+Deciding that after seeing the data is how failing programs survive.
+
+Rows in the retention context usually look like this:
+
+| Symptom | The trap | The one job |
+|---|---|---|
+| Enrolment high, redemption near zero | "members just need reminding" | First rung is out of reach — lower it to within 1–2 orders, or the currency reads as fake |
+| Redemption high, repeat rate flat | "the program is working, look at redemptions" | You are discounting people who would have returned anyway; measure against a holdout before scaling spend |
+| Second-purchase rate flat after launch | "add more earning actions" | Loyalty does not cause a second purchase — lifecycle timing does. Move the effort to the reorder window |
+| Tier 2 crowded, tier 3 empty | "the top tier is aspirational, that is fine" | Threshold is above the actual spend distribution; reset it off the real percentile |
+| AOV up, contribution down | "revenue is growing" | Reward cost plus stacked discounts now exceed the basket gain — check stacking rules first |
+| Subscribers churning at cycle 2–3 | "improve the emails" | The second shipment usually arrives before the first is used up — fix cadence, not copy |
+| Referral clicks with no conversions | "raise the reward" | The friend-side offer is weaker than the site's own welcome offer, so referral loses to the popup |
+
+Pair each with a date to look again, sized to the behaviour: reorder-window metrics need a
+full cycle plus a margin, so a 30-day cadence product is not judged at two weeks.
 
 ### Approval gate 1 — Strategy
 
@@ -322,12 +413,18 @@ For `DEMO_SEED`, read `references/demo-store-data.md`.
 Use `references/output-template.md`. Always include:
 
 - Executive stage verdict
-- Second-purchase count/rate
+- Second-purchase count/rate, reported alongside the total customer-record count
 - Evidence table
+- Merchant-claimed inputs, kept visibly separate from measured data
 - Economics and CAC
 - Segment map
 - Build-now/build-later/not-now
-- Proposed Joy program
+- Dated actions for the next 30/60/90 days, each with an owner and a finish line
+- Proposed Joy program, including VIP tiers and their perks
+- Subscription strategy, or an explicit statement that the cadence does not support one
+- AOV/bundle strategy
+- Expected business impact per lever, with measured/claimed/modelled labelled
+- Strategic monitoring table: symptom, trap, one job, review date
 - Creative territory and widget direction
 - Approval status
 - MCP writes/dry-runs/read-backs

@@ -49,6 +49,58 @@ Include:
 
 ### Do not build now
 
+## Actions — next 30 / 60 / 90 days
+
+One owner and one finish line per row. If an action cannot be checked off, it is a theme,
+not an action.
+
+| When | Action | Why this, now | Owner | Done when |
+|---|---|---|---|---|
+
+## Subscription strategy
+
+Recommend subscription only where observed cadence supports it; say so plainly if it does not.
+
+- Cadence evidence (median gap, how tight the distribution is):
+- Candidate count and how they were identified:
+- Products to offer on subscription, and which to keep one-time:
+- Proposed cadence options and default:
+- First-order vs ongoing discount, and why that split:
+- What the subscriber gets that is not a discount:
+- Cannibalization check — what share of these orders already repeat unprompted:
+
+## AOV and bundle strategy
+
+- Current AOV, and AOV by order composition (single item vs multi-item vs bundle SKU):
+- Which bundles carry revenue and which do not:
+- Observed progression paths (entry product → what next):
+- Proposed bundle/threshold changes:
+- Margin guardrail — discount depth that keeps contribution intact:
+
+## Expected business impact
+
+State the mechanism, the size, and the confidence separately. Label every figure as
+**measured**, **merchant-claimed**, or **modelled**, and show the arithmetic for anything
+modelled so the reader can disagree with the assumption rather than the conclusion.
+
+| Lever | Metric it moves | From → To | Revenue effect | Basis | Confidence |
+|---|---|---|---:|---|---|
+
+- Assumptions behind each modelled figure:
+- What would have to be true for this to fail:
+
+## Strategic monitoring
+
+Not a dashboard wish-list. Each row is a symptom you might see in 30–90 days, the wrong
+instinct it usually triggers, and the single job that actually addresses it.
+
+| Symptom | The trap | The one job | Check on |
+|---|---|---|---|
+
+- Primary metric this program is judged on:
+- Guardrail metrics that must not degrade:
+- Review cadence and decision rule (what result means stop, iterate, or scale):
+
 ## Brand story
 
 - Brand promise:
