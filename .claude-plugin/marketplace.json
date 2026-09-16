@@ -10,7 +10,7 @@
     {
       "name": "shopify-retention-architect",
       "source": ".",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "description": "Audit Shopify retention and safely build approved Joy and Klaviyo programs.",
       "category": "productivity"
     }

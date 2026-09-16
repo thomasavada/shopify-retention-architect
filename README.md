@@ -128,6 +128,7 @@ evals/
   example-output.md
   validate_output.py
 prompts/
+  handoff-existing-shopify-cli.md
   setup-realistic-demo-store.md
 ```
 
@@ -137,6 +138,9 @@ Use [`prompts/setup-realistic-demo-store.md`](prompts/setup-realistic-demo-store
 to give Codex or Claude Code the full execution context for creating a deterministic
 12-month Shopify dataset with 300 customers, 500 paid/fulfilled orders, bundles,
 repeat cohorts, adaptive API throttling, Joy reconciliation, and Klaviyo draft setup.
+
+If Shopify CLI is already authenticated and connected, use the shorter continuation
+brief: [`prompts/handoff-existing-shopify-cli.md`](prompts/handoff-existing-shopify-cli.md).
 
 ## Evaluation
 
