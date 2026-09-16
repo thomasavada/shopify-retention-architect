@@ -2,6 +2,18 @@
 
 Seed only after confirming the target is a Shopify development store.
 
+For an end-to-end setup/build brief, use `../../../prompts/setup-realistic-demo-store.md`.
+
+Historical orders must use Admin GraphQL `orderCreate` with `processedAt` set to an
+ISO-8601 time in the past. Shopify documents `processedAt` as the date shown on the
+order and used in analytics. Do not try to backdate immutable `createdAt`, and never
+set future timestamps.
+
+The seeder must adapt to GraphQL cost throttle metadata instead of using fixed blind
+parallelism. Start at one or two order mutations per second, inspect
+`extensions.cost.throttleStatus`, back off on `THROTTLED`/429, persist progress after
+every success, and resume without duplicates.
+
 ## Scenario
 
 A fictional colorful functional-drink brand with bundles, subscriptions and enough repeat behavior to produce a meaningful retention diagnosis.

@@ -127,7 +127,16 @@ evals/
   test-prompt.md
   example-output.md
   validate_output.py
+prompts/
+  setup-realistic-demo-store.md
 ```
+
+## Realistic demo store
+
+Use [`prompts/setup-realistic-demo-store.md`](prompts/setup-realistic-demo-store.md)
+to give Codex or Claude Code the full execution context for creating a deterministic
+12-month Shopify dataset with 300 customers, 500 paid/fulfilled orders, bundles,
+repeat cohorts, adaptive API throttling, Joy reconciliation, and Klaviyo draft setup.
 
 ## Evaluation
 
