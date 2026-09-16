@@ -55,6 +55,57 @@ skills/shopify-retention-architect/SKILL.md
 git clone https://github.com/thomasavada/shopify-retention-architect.git
 ```
 
+## Run it on your own store
+
+Three steps from a cold start to an audit of your own data.
+
+**1. Install the plugin** using the commands above.
+
+**2. Connect the store.** Shopify CLI is the quickest route for an audit, because nothing
+has to be created first:
+
+```bash
+shopify store auth --store your-store.myshopify.com \
+  --scopes read_products,read_customers,read_orders,read_all_orders,read_reports
+```
+
+⚠️ **`read_all_orders` is not optional.** Without it Shopify returns only the last 60 days
+of orders — silently, with no error. A "12-month audit" then quietly becomes a 60-day one,
+and every cohort, AOV figure and trend in the report is wrong. This is the easiest way
+available to get a confident, wrong answer.
+
+`read_reports` is what makes the ShopifyQL sales queries work. Without it the audit falls
+back to computing the same figures from raw orders — slower, equivalent.
+
+**3. Ask for the audit** in the same directory:
+
+> Audit this Shopify store's retention and tell me whether it should build loyalty.
+> Store: your-store.myshopify.com
+
+The run defaults to `AUDIT_ONLY`: it reads, and writes nothing. You will be asked a short
+set of questions the store data cannot answer — contribution margin, ad spend, what has
+already been tried. Answer what you can; anything skipped is reported as unsized rather
+than guessed.
+
+### What comes back
+
+One report: your second-purchase rate with the denominator stated, customer segments with
+real counts, dated actions for the next 30/60/90 days, a loyalty program specified closely
+enough to hand to a developer, subscription and bundle strategy, expected impact per lever
+with measured and modelled figures kept apart, and a monitoring table naming each symptom,
+the instinct that usually makes it worse, and the one job that addresses it.
+
+If the store already runs a loyalty program, the audit diagnoses that program instead of
+designing over the top of it — who is enrolled, what has actually been issued, and which
+rules are running against capability the store does not have.
+
+### If you want it to build, not just audit
+
+Writes are a separate mode and a separate credential. Shopify CLI sessions are rejected by
+some write mutations, so create a custom app in the store admin (Settings → Apps → Develop
+apps), grant the matching `write_*` scopes, and use its `shpat_…` Admin API token. Every
+build step previews a diff and applies only after you approve it.
+
 ## Trigger examples
 
 - “Audit this Shopify store's retention.”
