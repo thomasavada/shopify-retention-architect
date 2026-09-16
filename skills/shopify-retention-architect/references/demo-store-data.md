@@ -9,10 +9,53 @@ ISO-8601 time in the past. Shopify documents `processedAt` as the date shown on 
 order and used in analytics. Do not try to backdate immutable `createdAt`, and never
 set future timestamps.
 
-The seeder must adapt to GraphQL cost throttle metadata instead of using fixed blind
-parallelism. Start at one or two order mutations per second, inspect
-`extensions.cost.throttleStatus`, back off on `THROTTLED`/429, persist progress after
-every success, and resume without duplicates.
+## Throughput: budget hours, not minutes
+
+The cost-based throttle everyone writes about is **not** the binding constraint for order
+seeding, and pacing against it will mislead you. Measured against a development store:
+
+| What was tried | Result |
+|---|---|
+| `orderCreate` paced by `extensions.cost.throttleStatus` | Fails. The bucket reports ~3990/4000 available and `restoreRate` 200/s **while every call is being rejected** — this limiter is invisible to cost metadata and returns HTTP 200 with a `userErrors` message, never a 429 |
+| Sustained `orderCreate` rate | **5 orders per minute.** Shopify staff confirm this is a documented development/trial-store limit |
+| Rotating a second custom app/token | No effect — the limit is shop-scoped, not per-token (verified with a fresh token that had never made a call) |
+| `bulkOperationRunMutation` wrapping `orderCreate` | 1,600 lines → 5 succeeded, 1,595 returned "Too many attempts". Bulk runs lines far faster than 5/min, so it burns straight through the limit |
+| `bulkOperationRunMutation` wrapping `customerCreate` | Works well — 3,500 customers in ~100 seconds |
+| `draftOrderCreate` + `draftOrderComplete` | Bypasses the limit (~24/min) but the order lands at today's date; `DraftOrderInput` has no `processedAt` |
+| REST `PUT /orders/{id}` setting `processed_at` | Changes the field, but **Analytics does not re-index** — the backdated window reported 0 orders while the order stayed counted on its original date |
+
+So: historical orders can only be created by `orderCreate` with `processedAt` set **at
+creation time**, at 5/minute. 1,600 orders is roughly **5.5 hours**. Plan demo timelines
+around that; there is no technique that beats it on a development store. The only real
+lever is putting the store on a paid plan, which removes the dev-store restriction.
+
+Pace proactively with a sliding window (track the timestamps of the last five successes
+and wait only for the remainder of the 60-second window). A fixed sleep wastes quota
+because request latency counts against the interval — a flat 12.5s delay measured 4.36
+orders/min versus 5.0 with the sliding window.
+
+## Two failures that cost real data
+
+**`orderCreate` needs an offline access token.** A Shopify CLI session token is rejected
+with *"This mutation is only accessible to apps authenticated using offline tokens"*.
+Create a custom app in the store admin and use its `shpat_…` Admin API token.
+
+**Finish every customer before creating any order.** If an order is created while its
+customer does not exist yet, `orderCreate` implicitly creates a bare customer from the
+`email` field — without your marker tags or name. Those orphans then collide with your
+real customer pass as *"Email has already been taken"*. Treat that error as a signal the
+record already exists: look it up by email, adopt its ID, and patch the missing
+tags/name rather than recording a failure.
+
+Persist the manifest **incrementally** (every few successes), not once at the end — a run
+killed mid-flight otherwise leaves created orders untracked, and the next run duplicates
+them. When reconciling created orders back to your fixture, match on
+`(email, processedAt as epoch)`; string comparison fails because Shopify normalizes
+`2026-08-22T12:00:00.000Z` to `2026-08-22T12:00:00Z`.
+
+Orders created this way carry the custom app as their sales channel. `sourceName: "web"`
+is a protected value and is rejected for untrusted clients, so demo orders cannot be made
+to look like Online Store orders.
 
 ## Scenario
 

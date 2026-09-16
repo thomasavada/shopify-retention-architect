@@ -80,12 +80,63 @@ Collect 6–12 months where available:
 - Discount dependency and contribution margin.
 - Trend direction and data sufficiency.
 
-Prefer exact Shopify counts. A practical Admin GraphQL pattern is:
+#### Getting these counts right
 
-- `customersCount(query: "orders_count:>=1")`
-- `customersCount(query: "orders_count:>=2")`
+Two failure modes here produce a confidently wrong headline number. Both are silent, so
+neither announces itself during a live audit.
 
-Verify supported query syntax against the target API version before running it.
+**1. `customersCount` does not support the filters you want.** This pattern looks
+reasonable and is wrong:
+
+```graphql
+# DO NOT TRUST — returns a number, but the filter was ignored
+customersCount(query: "orders_count:>=2")
+```
+
+Measured on 2025-10: the response carries `extensions.search[].warnings` saying
+`orders_count` and `tag` are `invalid_field`, yet still returns a count — and
+`>=1` and `>=2` return the *identical* number. A wrong second-purchase rate then flows
+into every downstream conclusion.
+
+Instead, paginate `customers` and count client-side on the `numberOfOrders` field, which
+is a real field rather than a search index term:
+
+```graphql
+customers(first: 250, after: $cursor, query: "tag:YOUR_MARKER") {
+  edges { cursor node { id numberOfOrders amountSpent { amount } } }
+  pageInfo { hasNextPage }
+}
+```
+
+Whenever you use a `query:` filter, read `extensions.search[].warnings` and treat any
+`invalid_field` as a failed query, not a result.
+
+**2. Reading orders silently truncates to 60 days.** An app without the
+`read_all_orders` scope can only see orders from the last 60 days. Nothing errors —
+the older orders are simply absent, so a "12-month" audit quietly becomes a 60-day one
+and every cohort, AOV and trend is wrong. Confirm the scope before trusting any window
+longer than 60 days.
+
+For ShopifyQL aggregates this syntax is verified working:
+
+```
+FROM sales SHOW total_sales, orders SINCE -365d UNTIL today
+```
+
+`SHOW ... BY <column>` is a parse error — use `GROUP BY`, and always read `parseErrors`
+before using `tableData`. ShopifyQL also has its own budget (`extensions.shopifyqlCost`)
+separate from the GraphQL cost bucket.
+
+#### Report the denominator explicitly
+
+`second_purchase_rate` divides by customers with at least one order. Most stores hold far
+more customer *records* than purchasers — email captures, account signups, abandoned
+checkouts. Dividing by total records understates the rate several-fold and points the
+whole strategy at the wrong problem.
+
+So report both numbers side by side: total customer records, and purchasers. The gap
+between them is itself a finding — a base that is mostly non-purchasers is an activation
+problem, and no loyalty mechanic addresses it.
 
 If fewer than six months of usable history or fewer than 100 fulfilled orders exist, label the audit provisional.
 

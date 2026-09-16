@@ -306,16 +306,36 @@ extensions.cost.throttleStatus.restoreRate
 
 Rules:
 
-1. Start conservatively at one or two order mutations per second.
-2. Before the next call, estimate whether enough points are available.
-3. Sleep based on the deficit divided by `restoreRate`, plus jitter.
-4. On GraphQL `THROTTLED` or HTTP 429, honor `Retry-After` when present; otherwise exponential backoff with jitter.
-5. Bound concurrency; do not fire 500 promises at once.
-6. Retry network/429/5xx failures with a cap.
-7. Do not retry validation/user errors unchanged.
-8. Log costs and retry reasons without credentials.
+1. Before the next call, estimate whether enough points are available.
+2. Sleep based on the deficit divided by `restoreRate`, plus jitter.
+3. On GraphQL `THROTTLED` or HTTP 429, honor `Retry-After` when present; otherwise exponential backoff with jitter.
+4. Bound concurrency; do not fire 500 promises at once.
+5. Retry network/429/5xx failures with a cap.
+6. Do not retry validation/user errors unchanged.
+7. Log costs and retry reasons without credentials.
 
-At 500 orders, expect thousands of GraphQL cost points. A safe sequential/adaptive run can take several minutes; correctness and resumability matter more than speed.
+### The cost bucket is not what limits order seeding
+
+All of the above governs the *cost* throttle, which order creation on a development store
+never reaches. There is a second, separate limiter on `orderCreate`: **5 new orders per
+minute**, shop-scoped, documented by Shopify for development and trial stores.
+
+It is invisible to everything in this section. Measured while it was rejecting every call:
+`currentlyAvailable` 3990/4000, `restoreRate` 200/s, no 429, no `THROTTLED` code — the
+rejection arrives as HTTP 200 with `userErrors: [{ message: "Too many attempts. Please try
+again later." }]`. Code that paces on `extensions.cost` alone will therefore hammer the
+endpoint and log a wall of failures while believing it has headroom.
+
+So treat "Too many attempts" as a retryable throttle signal in its own right, and pace with
+a sliding window over the last five successes rather than a fixed sleep (a flat 12.5s delay
+measures 4.36 orders/min; the sliding window gets 5.0, because request latency counts
+against a fixed interval).
+
+**Budget accordingly: 1,600 orders takes about 5.5 hours; 500 orders about 100 minutes.**
+Neither bulk operations nor multiple custom apps change this — see
+`skills/shopify-retention-architect/references/demo-store-data.md` for what was tried and
+measured. Customers are unaffected and can be bulk-imported in minutes; only orders are
+throttled. Start the order seed early and let it run while you prepare the rest of the demo.
 
 ## Pilot before full seed
 
