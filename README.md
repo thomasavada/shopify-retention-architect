@@ -106,6 +106,39 @@ some write mutations, so create a custom app in the store admin (Settings → Ap
 apps), grant the matching `write_*` scopes, and use its `shpat_…` Admin API token. Every
 build step previews a diff and applies only after you approve it.
 
+## Run it inside Shopify admin, with no terminal (Sidekick)
+
+Most merchants will never install a plugin. The audit half of this skill therefore also ships
+as a **Shopify Sidekick Skill** — [`sidekick/retention-audit.txt`](sidekick/retention-audit.txt).
+Paste it into Shopify admin → Sidekick → Skills, give it the shortcut `retention-audit`, and the
+merchant runs the diagnosis by typing `/retention-audit` in a chat box they already use.
+
+It is a genuinely different artifact, not an export, and it is worth understanding why before
+you edit either one:
+
+- **Sidekick allows 5,500 characters of instructions and no bundled files.** This skill's
+  `SKILL.md` is ~517 lines and leans on five reference files for its method. None of that can
+  travel. Everything in the Sidekick version had to be rewritten as a rule a model can apply
+  from memory, and anything that only works with a lookup table — the ROI arithmetic, rung
+  spacing, the missing-margin procedure, every GraphQL field name — was cut rather than
+  half-remembered. A half-remembered margin procedure invents margin.
+- **Sidekick cannot write.** It reads the store it already sits inside and stops at the
+  diagnosis. All the Joy MCP and Klaviyo build paths live only in the plugin.
+- **What survived is the part that changes the answer**: purchasers as the denominator for
+  every rate, `processedAt` rather than `createdAt` for every window, the percentile
+  monotonicity check, the three constraint checks, the two behavioural tests, the Stop rule,
+  and the six verdicts — one of which is "nothing yet."
+
+Two of those guards exist because a real Sidekick run got them wrong: it reported a top-4%
+spend threshold *below* the top-15% figure (arithmetically impossible, and it read as
+authoritative), and it quoted email consent against a record count it had itself just declared
+meaningless. Both were live in the plugin too. **When a run produces a wrong number, fix it in
+both places** — [`sidekick/README.md`](sidekick/README.md) records the full kept/dropped
+rationale and the sync rule.
+
+The file currently sits at 4,993 / 5,500 characters. The headroom is deliberate: it is room for
+the next guard.
+
 ## Trigger examples
 
 - “Audit this Shopify store's retention.”
@@ -173,6 +206,9 @@ skills/shopify-retention-architect/
     joy-mcp-execution.md
     klaviyo-mcp-execution.md
     output-template.md
+sidekick/
+  README.md            # why the Sidekick build differs, what was kept and dropped
+  retention-audit.txt  # paste-in Sidekick Skill, 4,993/5,500 chars, audit only
 evals/
   demo-brand.json
   test-prompt.md

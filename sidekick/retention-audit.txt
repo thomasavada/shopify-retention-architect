@@ -1,0 +1,82 @@
+Audit this store's retention and report what the data says. Diagnose only — do not design a loyalty program, and do not recommend one unless the evidence points there.
+
+MEASURE
+
+1. Purchasers = customers with at least one order. Repeat = customers with two or more.
+   second-purchase rate = repeat / purchasers.
+2. Report the total customer-record count NEXT TO the purchaser count. Most stores hold far
+   more records than buyers (email captures, account signups). Dividing by total records
+   understates the rate several-fold and aims the whole strategy at the wrong problem.
+3. Use the order's PROCESSED date for every window, sort and interval. The created date is
+   when the row was written; on any migrated or imported store the two diverge and a year of
+   trading collapses into however long the import took, silently.
+4. Sanity-check before reporting: a stricter percentile must have a HIGHER threshold, so
+   the top-4% spend figure cannot be below the top-15% figure. If it is, the query is wrong.
+   Report reorder gaps in DAYS, not weeks — a flow fires on a day.
+5. Also collect: orders per purchaser; time to second order as p25 / median / p75; AOV split
+   into first orders vs repeat orders; share of revenue from repeat orders; trailing-12-month
+   spend per purchaser at the top 15% and top 4%; share of orders carrying a discount, split
+   first vs repeat; top products and whether bundles carry more basket than single items.
+
+THREE CHECKS THAT CONSTRAIN WHAT YOU MAY RECOMMEND
+
+- Email/SMS consent among PURCHASERS — divide by purchasers, not by total records. The
+  denominator rule applies to every rate in the report, not only the repeat rate. If most
+  purchasers are not subscribed, the first job is consent capture and any flow you propose
+  reaches almost nobody.
+- Whether a loyalty or subscription app is already installed and what it is actually doing —
+  how many members, what has actually been issued, whether rules are switched on. Proposing a
+  program the merchant already runs destroys credibility.
+- Whether any selling plan exists. On a catalog with a monthly consumption cycle, the absence
+  of a subscription mechanism is itself a headline finding, not a footnote.
+
+TWO TESTS BEFORE YOU CONCLUDE
+
+Cadence vs basket. A tight repeat gap says "subscription". But check how often a second order
+contains a product from the first. Tight cadence with low same-product repeat means customers
+keep a rhythm while rotating items — that is a FLEXIBLE subscription, not subscribe-and-save
+on a hero SKU. Reporting only the cadence leads to the opposite build.
+
+Artifact vs behaviour. If most records never purchased, the naive reading is an activation
+problem. Test it before saying it: compare the spread of customer creation dates against the
+spread of order dates — a real store accumulates both together. Check whether non-purchasers
+differ systematically from buyers (all created the same week, or better email consent than
+buyers). If they do, they are an import artifact and must be excluded from every rate, not
+called a dormant audience.
+
+VERDICT
+
+Name the ONE constraint that binds, and say which of these the evidence supports:
+- First-order conversion or traffic — acquisition, not retention
+- Basket too small to fund anything — AOV, bundles, thresholds
+- Product repeats but buyers stop after order one — lifecycle timing, aimed at the window
+  just BEFORE the median gap
+- Predictable replenishment — subscription
+- Organic repeat and margin already exist — then, and only then, loyalty
+- Nothing yet — say so
+
+Loyalty is not the default answer. If repeat behaviour is already healthy without a program,
+say that plainly and name what would actually move the number.
+
+STOP IF THE DATA CANNOT ANSWER
+
+If no customer has a second order, then repeat rate, time-to-second, repeat AOV and any
+at-risk or lapsed segment are structurally unfillable. Report what you did measure, say the
+dataset cannot support a verdict and what is missing, and stop. A long report whose headline
+metric is 0% reads as authoritative while saying nothing.
+
+OUTPUT
+
+- Verdict: the binding constraint, in one sentence
+- Evidence table: metric, value, window, and where it came from
+- Three to five findings, each a sentence a merchant could act on
+- Segments with real counts: one-time within the reorder window, one-time past it, active
+  repeaters, at-risk, lapsed, subscription-shaped (three or more orders at a stable gap)
+- What you could not measure, and what would change the answer
+
+Never invent margin, ad spend, CAC, reorder cadence or industry benchmarks. Ask for margin
+and ad spend if the recommendation needs sizing; if unavailable, label the recommendation
+unsized rather than guessing. Keep measured figures separate from anything modelled.
+
+Close by naming the next step the verdict implies — the flow to build, the subscription to
+offer, the program setting to fix — so the merchant knows what to do, not just what is true.
