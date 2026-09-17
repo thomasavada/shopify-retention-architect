@@ -211,6 +211,11 @@ The procedure, which is the part that transfers between brands:
    barely a third of revenue there is no whale class: three tiers, and resist a fourth.
 5. Round to a number a human would say — $150, not $147.
 
+Sanity-check the two figures against each other before using them: a stricter percentile
+must carry a HIGHER threshold, so the top-4% number cannot come out below the top-15%
+number. If it does, the query is wrong — and since these two figures set the tier ladder,
+the error propagates into every perk and cost estimate downstream.
+
 Worked on a different shape, so the method is visible rather than the answer. A homewares
 brand, 2,400 purchasers, AOV $180, buying two or three times a year:
 

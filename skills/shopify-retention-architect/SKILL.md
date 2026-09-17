@@ -97,7 +97,11 @@ a subscription it has no mechanism to sell.
   .marketingState` while paginating customers. A lifecycle-first recommendation assumes a
   reachable audience; if most purchasers are `NOT_SUBSCRIBED`, the first job is consent
   capture, and any flow you design reaches almost nobody. Report the subscribed count
-  alongside the segment sizes, not as a footnote.
+  alongside the segment sizes, not as a footnote. Divide by purchasers, not by total
+  records — the denominator rule governs every rate in the report, not only the repeat
+  rate. A run that states the record count is meaningless and then reports consent against
+  it has contradicted itself in its own table, which is exactly how a reader stops trusting
+  the rest.
 - **What is already installed and live.** Query `appInstallations`. Recommending a program
   the merchant already runs — or a tier structure that collides with live tiers and
   balances — destroys credibility immediately. If a program exists, the task changes from
