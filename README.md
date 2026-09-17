@@ -108,10 +108,20 @@ build step previews a diff and applies only after you approve it.
 
 ## Run it inside Shopify admin, with no terminal (Sidekick)
 
-Most merchants will never install a plugin. The audit half of this skill therefore also ships
-as a **Shopify Sidekick Skill** — [`sidekick/retention-audit.txt`](sidekick/retention-audit.txt).
-Paste it into Shopify admin → Sidekick → Skills, give it the shortcut `retention-audit`, and the
-merchant runs the diagnosis by typing `/retention-audit` in a chat box they already use.
+Most merchants will never install a plugin. This skill therefore also ships as **two paste-in
+Shopify Sidekick Skills**, run from a chat box the merchant already uses:
+
+| File | Shortcut | Role |
+|---|---|---|
+| [`sidekick/retention-audit.txt`](sidekick/retention-audit.txt) | `retention-audit` | diagnoses, and may conclude no program is needed |
+| [`sidekick/loyalty-program.txt`](sidekick/loyalty-program.txt) | `loyalty-program` | designs the program, once a verdict has earned one |
+
+**Two skills rather than one, on purpose.** A single skill that both diagnoses and designs has
+a thumb on the scale: the same instructions that tell it to size a reward ladder make "build a
+ladder" the expected output, and the six verdicts quietly collapse to one. Kept apart, the
+audit is free to end with *"you do not need this"* and simply not hand over — which is the
+entire reason it is worth running. The 5,500-character ceiling applies per skill and neither
+half fits with the other attached, so the runtime wants the same split the method does.
 
 It is a genuinely different artifact, not an export, and it is worth understanding why before
 you edit either one:
@@ -136,8 +146,11 @@ meaningless. Both were live in the plugin too. **When a run produces a wrong num
 both places** — [`sidekick/README.md`](sidekick/README.md) records the full kept/dropped
 rationale and the sync rule.
 
-The file currently sits at 4,993 / 5,500 characters. The headroom is deliberate: it is room for
-the next guard.
+`retention-audit.txt` sits at 4,965 / 5,500 characters, and that headroom is deliberate — room
+for the next guard. `loyalty-program.txt` sits at 5,492 / 5,500 and is effectively full: adding
+a rule there means deciding which existing rule earns its place less, not trimming prose until
+it fits. Count characters, not bytes — an em dash is three bytes and one character, so a byte
+count will fail a file that passes.
 
 ## Trigger examples
 
@@ -208,7 +221,8 @@ skills/shopify-retention-architect/
     output-template.md
 sidekick/
   README.md            # why the Sidekick build differs, what was kept and dropped
-  retention-audit.txt  # paste-in Sidekick Skill, 4,993/5,500 chars, audit only
+  retention-audit.txt  # paste-in Sidekick Skill — diagnose, 4,965/5,500 chars
+  loyalty-program.txt  # paste-in Sidekick Skill — design, 5,492/5,500 chars
 evals/
   demo-brand.json
   test-prompt.md

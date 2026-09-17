@@ -1,0 +1,49 @@
+Design a loyalty program for this store from its own data. Audit retention first: if evidence points at acquisition, basket size, lifecycle timing or subscription, say so and stop. A program built on the wrong diagnosis quietly costs margin for a year while the number it was meant to move stays flat.
+
+FIRST, CHECK WHAT ALREADY RUNS
+
+Read whether a loyalty app is installed, how many members it has, and what it has issued. Diagnose that program rather than designing over it: proposing one the merchant already runs ends the conversation.
+
+DERIVE EVERY NUMBER FROM THIS STORE
+
+If you cannot point at the figure that produced a threshold you are guessing; say so rather than presenting it as designed. Never copy another brand's dollars: they carry that brand's basket and order frequency with them.
+
+Tier thresholds. Compute trailing-12-month spend per purchaser, sort descending, read the figure at the top 15% (tier 2) and top 4% (tier 3). Round to a number a human would say: $150, not $147. Check the revenue share each slice holds: if the top 4% holds a fifth of revenue the perks are affordable; if the top decile holds barely a third there is no whale class, so use three tiers.
+
+Sanity-check first: a stricter percentile must carry a HIGHER threshold, so the top-4% figure cannot be below the top-15% figure. If it is, the query is wrong, and that error propagates into every perk and cost estimate downstream.
+
+First rung from AOV, reachable in one or two orders. Point expiry from the median gap between orders: two to three times it, never sooner, and warn first. Referral minimum order above AOV, or the reward subsidises a below-average basket.
+
+TIERS ARE EARNED BY SPEND, NEVER BY ACCUMULATED POINTS
+
+The most common error, and self-defeating: if status runs on the same points members spend, redeeming a reward demotes them. Members hoard, the currency stops circulating, the program inverts its purpose. Spend sets status; points are for spending. Trailing 12 months, not a calendar-year reset.
+
+THE ARITHMETIC
+
+redemption_ROI = (reward_value / (units_required / earn_rate)) x 100
+
+~1% is the safe default. Richer can be right, but that is a margin decision: state the cost as a percentage of revenue rather than burying it in a points table.
+
+Where 1% and "reachable" collide. Below a certain basket they are incompatible: at $58 AOV two orders earn 116 points at 1 per dollar, which at 1% buys a $1.16 reward. Nobody joins for that. Name the lever you pull: make the first rung NON-MONETARY (free shipping, a sample, early access carry perceived value above marginal cost, sidestepping the ratio; usually right on a low-AOV catalog), or run richer than 1% and say the number out loud. Moving the rung further out does NOT work: five orders at $58 is $290, still $2.90. Distance cannot rescue a rate too thin for the basket. Never quietly ship a $1 reward, nor keep the 1% label while the ladder pays 5%.
+
+Ladder shape. At least five rungs. Keep monetary rungs on a flat arithmetic step so the next reward is always the same distance away; geometric spacing makes each feel further than the last, the opposite of what a ladder is for. Hold redemption ROI FLAT across monetary rungs: if it rises you have built an incentive to hoard. Put escalation in the tier multiplier, which rewards sustained spend rather than a sitting balance. Top rung not convertible to money.
+
+Ranges: earn 1-5 units per $1; signup bonus $0.50-1.00 of value; referral $8-15 each side; multiplier steps of ~0.25x. Read a multiplier as cost: a 1% base at 1.5x pays 1.5% on your best customers. Cap what a member earns without buying below the first rung, or you have built a way to farm rewards.
+
+IF CONTRIBUTION MARGIN IS UNAVAILABLE
+
+Do not dead-end, and do not invent one. Design at a stated planning assumption, labelled as an assumption not a finding. Show what changes if it is wrong: cost as a share of revenue at a low, middle and high margin, plus the break-even repeat-rate or AOV lift at each. Make margin confirmation a launch gate: designed now, live once the merchant confirms it is affordable.
+
+PIN THESE DOWN, OR SOMEONE DECIDES THEM SILENTLY
+
+- What earning applies to: post-discount merchandise subtotal, excluding tax, shipping and gift cards. Earning on the pre-discount total lets a sitewide sale inflate every balance.
+- How the multiplier compounds: it multiplies the EARN RATE, not redemption value. Left undefined, implementations have shipped at 6% by stacking both ends.
+- Product rewards costed at COGS, shown at retail: that gap is why they beat dollars off. State both.
+- Breakage: from the incumbent program's history if there is one; otherwise model a band, not a point estimate, and track liability monthly.
+- Redemption stacking: whether a reward rides on a discount code, bundle price or subscription discount. The most expensive unstated rule.
+- Eligible SKUs by name, preferring high retail-to-COGS items with stock depth. "Free full-size product" is not buildable.
+- Capacity for any experiential rung: how many a month, who delivers it, what happens when demand exceeds supply.
+
+OUTPUT
+
+Tier table with thresholds and the percentile each came from; reward ladder with units, value and ROI per rung; earning and mission values with the no-purchase cap; referral terms; expiry; the definitions above; cost as a share of revenue with the margin assumption stated; and the first three things to measure after launch. Keep measured figures apart from modelled ones.
